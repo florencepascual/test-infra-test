@@ -1,0 +1,25 @@
+periodics:
+  - name: docker-all-in-one-test
+    #labels:
+    #  preset-dind-enabled: "true"
+    cluster: k8s-ppc64le-cluster
+    decorate: true
+    always_run: true
+    interval: 2m
+    spec:
+      containers:
+      - image: quay.io/alunsin/all_in_one_dind
+        command:
+        - sh
+        resources: {}
+        terminationMessagePolicy: FallbackToLogsOnError
+        securityContext:
+          privileged: true
+        #volumeMounts:
+        #- name: docker-root
+        #  mountPath: /var/lib/docker
+      restartPolicy: Never
+      terminationGracePeriodSeconds: 18
+      #volumes:
+      #- emptyDir: {}
+      #  name: docker-graph-storage
