@@ -6,15 +6,17 @@
 ### Set Up
 
 ```
-# Cloning the repo kubernetes/test-infra
+# Cloning the repo kubernetes/test-infra for the mkpj, mkppod and pj-on-kind.sh
 git clone https://github.com/kubernetes/test-infra
 
-# Download the dockerd-entrypoint.sh and put in the /usr/local/bin/ directory
-sudo wget -o /usr/local/bin/dockerd-entrypoint.sh https://raw.githubusercontent.com/docker-library/docker/master/dockerd-entrypoint.sh
+# Download the prow job config file
+mkdir -p /home/fpascual/test-infra/config/jobs/docker-in-docker
+curl -o /home/fpascual/test-infra/config/jobs/docker-in-docker/periodic-all-in-one.yaml https://raw.githubusercontent.com/florencepascual/test-infra-1/master/config/jobs/periodic/docker-in-docker/periodic-all-in-one.yaml
 
-# Download the job 
-mkdir -p /home/fpascual/test-infra/config/jobs/all-in-one/all-in-one
-curl --oauth2-bearer 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 -o /home/fpascual/test-infra/config/jobs/all-in-one/all-in-one/periodic-all-in-one-test.yaml https://raw.githubusercontent.com/florencepascual/prow_test/main/periodic-all-in-one-test.yaml
+# download ppc64le config file
+curl -o /home/fpascual/test-infra/config/prow/config-ppc64le.yaml https://raw.githubusercontent.com/ppc64le-cloud/test-infra/master/config/prow/config.yaml
+# rename kubernetes file
+mv /home/fpascual/test-infra/config/prow/config.yaml /home/fpascual/test-infra/config/prow/config-kubernetes.yaml 
 
 # docker, kubectl, kind
 docker
@@ -24,7 +26,7 @@ kind get clusters
 # if no kind clusters, create them
 kind create cluster
 ```
-on x86
+on x86 to set KUBECONFIG
 ```
 export KUBECONFIG='/home/fpascual/.kube/kind-config-mkpod'
 ```
@@ -35,31 +37,23 @@ export KUBECONFIG='/home/fpascual/.kube/kind-config-mkpod'
 
 ```
 # CONFIG_PATH and JOB_CONFIG_PATH need to be absolute path
-export CONFIG_PATH="/home/fpascual/test-infra/config/prow/config.yaml" JOB_CONFIG_PATH="/home/fpascual/test-infra/config/jobs/all-in-one/all-in-one/periodic-all-in-one-test.yaml"
+export CONFIG_PATH="/home/fpascual/test-infra/config/prow/config-kubernetes.yaml" 
+export CONFIG_PATH="/home/fpascual/test-infra/config/prow/config-ppc64le.yaml" 
+
+export JOB_CONFIG_PATH="/home/fpascual/test-infra/config/jobs/all-in-one/all-in-one/periodic-all-in-one-test.yaml"
 
 ./test-infra/prow/pj-on-kind.sh docker-all-in-one-test
 ```
 
-```
-# CONFIG_PATH and JOB_CONFIG_PATH need to be absolute path
-export CONFIG_PATH="/home/fpascual/test-infra/config/prow/config-ppc64le.yaml" JOB_CONFIG_PATH="/home/fpascual/test-infra/config/jobs/all-in-one/all-in-one/periodic-all-in-one-test-ppc64le.yaml"
-
-./test-infra/prow/pj-on-kind.sh docker-all-in-one-test
-```
-
-```
-# CONFIG_PATH and JOB_CONFIG_PATH need to be absolute path
-export CONFIG_PATH="/home/fpascual/test-infra/config/prow/config-ppc64le.yaml" JOB_CONFIG_PATH="/home/fpascual/test-infra/config/jobs/all-in-one/all-in-one/periodic-all-in-one-test-new.yaml"
-
-./test-infra/prow/pj-on-kind.sh docker-all-in-one-test
-```
-
-### Testing
+### Testing manually
 
 ```
 kubectl get pods
 # get the id of the pod we just created
 id='pod-id'
 kubectl exec -it $id -- /bin/bash
+
+# get the logs of the container test
+kubectl logs $id test
 ```
 
