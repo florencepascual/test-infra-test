@@ -15,11 +15,11 @@ periodics:
         terminationMessagePolicy: FallbackToLogsOnError
         securityContext:
           privileged: true
-        #volumeMounts:
-        #- name: docker-root
-        #  mountPath: /var/lib/docker
+        volumeMounts:
+        - name: docker-root
+          mountPath: /var/lib/docker
       restartPolicy: Never
       terminationGracePeriodSeconds: 18
-      #volumes:
-      #- emptyDir: {}
-      #  name: docker-graph-storage
+      volumes:
+      - emptyDir: {}
+        name: docker-root
