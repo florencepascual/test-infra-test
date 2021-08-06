@@ -10,7 +10,11 @@ periodics:
       containers:
       - image: quay.io/alunsin/all_in_one_dind
         command:
-        - sh
+        - /bin/bash
+        args:
+        - ls
+        - docker 
+        - docker run alpine
         resources: {}
         terminationMessagePolicy: FallbackToLogsOnError
         securityContext:
