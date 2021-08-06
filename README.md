@@ -41,6 +41,7 @@ export CONFIG_PATH="/home/fpascual/test-infra/config/prow/config-kubernetes.yaml
 export CONFIG_PATH="/home/fpascual/test-infra/config/prow/config-ppc64le.yaml" 
 
 export JOB_CONFIG_PATH="/home/fpascual/test-infra/config/jobs/all-in-one/all-in-one/periodic-all-in-one-test.yaml"
+export JOB_CONFIG_PATH="/home/fpascual/test-infra/config/jobs/docker-in-docker/periodic-all-in-one.yaml"
 
 ./test-infra/prow/pj-on-kind.sh docker-all-in-one-test
 ```
