@@ -12,6 +12,7 @@ periodics:
         command:
         - /bin/bash
         args:
+        - -c
         - ls
         #  echo "Hello World"
         #  docker 
