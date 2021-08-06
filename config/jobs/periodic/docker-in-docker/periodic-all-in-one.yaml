@@ -17,6 +17,16 @@ periodics:
           ls
           echo "Hello World"
           docker 
+          echo "Waiting for dockerd to start"
+          TIMEOUT=10
+          DAEMON="dockerd"
+          i=0
+          while [ $i -lt $TIMEOUT ] && ! /usr/bin/pgrep $DAEMON
+          do
+              echo "Number: $i"
+              i=$((i+1))
+              sleep 2
+          done
           docker run alpine
         resources: {}
         terminationMessagePolicy: FallbackToLogsOnError
