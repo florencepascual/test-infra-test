@@ -16,8 +16,8 @@ periodics:
         - |
           ls
           echo "Hello World"
-        #  docker 
-        #  docker run alpine
+          docker 
+          docker run alpine
         resources: {}
         terminationMessagePolicy: FallbackToLogsOnError
         securityContext:
