@@ -12,11 +12,10 @@ periodics:
         command:
         - /bin/bash
         args:
-        - |
-          ls
-          echo "Hello World"
-          docker 
-          docker run alpine
+        - ls
+        #  echo "Hello World"
+        #  docker 
+        #  docker run alpine
         resources: {}
         terminationMessagePolicy: FallbackToLogsOnError
         securityContext:
