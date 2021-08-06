@@ -13,8 +13,9 @@ periodics:
         - /bin/bash
         args:
         - -c
-        - ls
-        #  echo "Hello World"
+        - |
+          ls
+          echo "Hello World"
         #  docker 
         #  docker run alpine
         resources: {}
