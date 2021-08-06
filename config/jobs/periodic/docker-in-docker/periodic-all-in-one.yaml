@@ -27,3 +27,4 @@ periodics:
       terminationGracePeriodSeconds: 18
       volumes:
       - name: docker-root
+        emptyDir: {}
