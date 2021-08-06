@@ -17,8 +17,6 @@ periodics:
           ls
           echo "Hello World"
           docker 
-          systemctl start docker
-          service docker restart
           docker run alpine
         resources: {}
         terminationMessagePolicy: FallbackToLogsOnError
