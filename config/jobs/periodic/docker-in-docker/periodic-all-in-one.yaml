@@ -21,5 +21,4 @@ periodics:
       restartPolicy: Never
       terminationGracePeriodSeconds: 18
       volumes:
-      - emptyDir: {}
-        name: docker-root
+      - name: docker-root
