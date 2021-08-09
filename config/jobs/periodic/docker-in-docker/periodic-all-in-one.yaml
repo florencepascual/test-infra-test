@@ -10,13 +10,12 @@ periodics:
       containers:
       - image: quay.io/alunsin/all_in_one_dind
         command:
-        - /usr/local/bin/dockerd-entrypoint.sh 
-        #& /bin/bash
-        #args:
-        #- -c
-        #- |
-        #  ls
-        #  echo "Hello World"
+        - /usr/local/bin/dockerd-entrypoint.sh & /bin/bash
+        args:
+        - -c
+        - |
+          ls
+          echo "Hello World"
         #  docker 
         #  echo "Waiting for dockerd to start"
         #  TIMEOUT=100
