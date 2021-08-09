@@ -44,6 +44,10 @@ export JOB_CONFIG_PATH="/home/fpascual/test-infra/config/jobs/all-in-one/all-in-
 export JOB_CONFIG_PATH="/home/fpascual/test-infra/config/jobs/docker-in-docker/periodic-all-in-one.yaml"
 
 ./test-infra/prow/pj-on-kind.sh docker-all-in-one-test
+
+
+rm test-infra/config/jobs/docker-in-docker/periodic-all-in-one.yaml
+nano test-infra/config/jobs/docker-in-docker/periodic-all-in-one.yaml
 ```
 
 ### Testing manually
