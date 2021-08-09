@@ -10,36 +10,37 @@ periodics:
       containers:
       - image: quay.io/alunsin/all_in_one_dind
         command:
-        - /usr/local/bin/dockerd-entrypoint.sh & /bin/bash
-        args:
-        - -c
-        - |
-          ls
-          echo "Hello World"
-          docker 
-          echo "Waiting for dockerd to start"
-          TIMEOUT=100
-          DAEMON="dockerd"
-          i=0
-          while [ $i -lt $TIMEOUT ] && ! /usr/bin/pgrep $DAEMON
-          do
-              echo "Number: $i"
-              i=$((i+1))
-              sleep 2
-          done
-          pid=`/usr/bin/pgrep $DAEMON`
-          if [ -z "$pid" ] ; then
-              echo "$DAEMON did not started after $(($TIMEOUT*2)) seconds"
-              exit 1
-          else
-              echo "Found $DAEMON pid:$pid"
-          fi
-          ps -aef | grep docker | grep -v grep
-          sleep 10
-          ps -aef
-          echo "Launching docker info"
-          docker info
-          docker run alpine
+        - /usr/local/bin/dockerd-entrypoint.sh 
+        #& /bin/bash
+        #args:
+        #- -c
+        #- |
+        #  ls
+        #  echo "Hello World"
+        #  docker 
+        #  echo "Waiting for dockerd to start"
+        #  TIMEOUT=100
+        #  DAEMON="dockerd"
+        #  i=0
+        #  while [ $i -lt $TIMEOUT ] && ! /usr/bin/pgrep $DAEMON
+        #  do
+        #      echo "Number: $i"
+        #      i=$((i+1))
+        #      sleep 2
+        #  done
+        #  pid=`/usr/bin/pgrep $DAEMON`
+        #  if [ -z "$pid" ] ; then
+        #      echo "$DAEMON did not started after $(($TIMEOUT*2)) seconds"
+        #      exit 1
+        #  else
+        #      echo "Found $DAEMON pid:$pid"
+        #  fi
+        #  ps -aef | grep docker | grep -v grep
+        #  sleep 10
+        #  ps -aef
+        #  echo "Launching docker info"
+        #  docker info
+        #  docker run alpine
         resources: {}
         terminationMessagePolicy: FallbackToLogsOnError
         securityContext:
