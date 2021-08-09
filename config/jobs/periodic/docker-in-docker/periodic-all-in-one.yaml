@@ -10,7 +10,7 @@ periodics:
       containers:
       - image: quay.io/alunsin/all_in_one_dind
         command:
-        - ./usr/local/bin/dockerd-entrypoint.sh & /bin/bash
+        - /usr/local/bin/dockerd-entrypoint.sh & /bin/bash
         args:
         - -c
         - |
