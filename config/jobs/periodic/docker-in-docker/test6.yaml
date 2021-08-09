@@ -1,4 +1,3 @@
-  
 periodics:
   - name: docker-all-in-one-test
     #labels:
