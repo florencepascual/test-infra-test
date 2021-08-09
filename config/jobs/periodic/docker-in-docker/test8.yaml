@@ -10,7 +10,7 @@ periodics:
       containers:
       - image: quay.io/alunsin/all_in_one_dind
         command: ["/usr/local/bin/dockerd-entrypoint.sh"]
-        args: ["bash -c, echo "Hello World"]
+        args: ["bash -c", "echo Hello World"]
         resources: {}
         terminationMessagePolicy: FallbackToLogsOnError
         securityContext:
