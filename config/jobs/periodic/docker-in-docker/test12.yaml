@@ -11,7 +11,7 @@ periodics:
         - /bin/bash
         args:
         - -c
-        - "echo HelloWorld & /usr/local/bin/dockerd-entrypoint.sh & echo HelloWorld"
+        - "echo HelloWorld & /usr/local/bin/dockerd-entrypoint.sh & ls /etc/secret"
         resources: {}
         terminationMessagePolicy: FallbackToLogsOnError
         securityContext:
@@ -19,8 +19,14 @@ periodics:
         volumeMounts:
         - name: docker-root
           mountPath: /var/lib/docker
+        - name: secret
+          mountPath: "/etc/secret"
+          readOnly: true
       restartPolicy: Never
       terminationGracePeriodSeconds: 18
       volumes:
       - name: docker-root
         emptyDir: {}
+      - name: secret
+        secret:
+          secretName: docker-secret
