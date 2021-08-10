@@ -19,14 +19,19 @@ periodics:
         volumeMounts:
         - name: docker-root
           mountPath: /var/lib/docker
-        - name: secret
-          mountPath: "/etc/secret"
+        - name: secrets
+          mountPath: "/etc/secrets"
           readOnly: true
       restartPolicy: Never
       terminationGracePeriodSeconds: 18
       volumes:
       - name: docker-root
         emptyDir: {}
-      - name: secret
+      - name: secrets
         secret:
           secretName: docker-secret
+          defaultMode: 0400
+          items:
+              - key: username
+              path: my-username
+              
