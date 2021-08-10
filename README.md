@@ -61,5 +61,8 @@ kubectl exec -it $id -- /bin/bash
 
 # get the logs of the container test
 kubectl logs $id test
+
+# delete a pod
+kubectl delete pod $id
 ```
 
