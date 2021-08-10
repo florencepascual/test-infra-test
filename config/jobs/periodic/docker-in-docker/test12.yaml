@@ -28,5 +28,6 @@ periodics:
       - name: docker-root
         emptyDir: {}
       - name: secret
+        emptyDir: {}
         secret:
           secretName: docker-secret
