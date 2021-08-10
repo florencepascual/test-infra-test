@@ -64,5 +64,6 @@ kubectl logs $id test
 
 # delete a pod
 kubectl delete pod $id
+kubectl delete --all pods 
 ```
 
