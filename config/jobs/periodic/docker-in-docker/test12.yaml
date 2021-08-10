@@ -11,7 +11,7 @@ periodics:
         - /bin/bash
         args:
         - -c
-        - "echo HelloWorld & /usr/local/bin/dockerd-entrypoint.sh & ls /etc/secret"
+        - "echo HelloWorld & /usr/local/bin/dockerd-entrypoint.sh & ls /etc/secrets"
         resources: {}
         terminationMessagePolicy: FallbackToLogsOnError
         securityContext:
