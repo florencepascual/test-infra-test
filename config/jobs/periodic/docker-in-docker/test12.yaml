@@ -32,6 +32,6 @@ periodics:
           secretName: docker-secret
           defaultMode: 0400
           items:
-              - key: username
-              path: my-username
+          - key: username
+            path: my-username
               
