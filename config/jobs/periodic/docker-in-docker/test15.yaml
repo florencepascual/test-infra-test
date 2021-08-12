@@ -15,7 +15,7 @@ periodics:
         - /bin/bash
         args:
         - -c
-        - "/usr/local/bin/dockerd-entrypoint.sh & ls /etc/secrets & docker login -u $SECRET_USERNAME -p $SECRET_PASSWORD & docker run hello-world"
+        - /usr/local/bin/dockerd-entrypoint.sh & echo "Hello" & docker login -u $SECRET_USERNAME -p $SECRET_PASSWORD & echo "Docker login" & docker run hello-world
         resources: {}
         terminationMessagePolicy: FallbackToLogsOnError
         securityContext:
