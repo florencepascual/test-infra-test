@@ -25,6 +25,7 @@ periodics:
             echo "Docker login 2"
             docker run hello-world
             docker run alpine
+            docker ps -a
           fi
         resources: {}
         terminationMessagePolicy: FallbackToLogsOnError
