@@ -1,5 +1,5 @@
 # test with secret mounted on volume
-# not working with kind, have to manually edit pod.yaml
+# not working with kind, have to manually edit pod.yaml BUT LOGIN NOT WORKING
 
 periodics:
   - name: docker-all-in-one-test
