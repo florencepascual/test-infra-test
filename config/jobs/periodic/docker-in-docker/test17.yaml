@@ -18,11 +18,9 @@ periodics:
           docker login -u "$SECRET_USERNAME" -p "$SECRET_PASSWORD" 
           if grep -Fq "index.docker.io" ~/.docker/config.json
           then
-            echo "docker was logged in, we will run hello-world"
             docker run hello-world
           else
             docker login -u $SECRET_USERNAME -p $SECRET_PASSWORD 
-            echo "Docker login 2"
             docker run hello-world
             docker run alpine
             docker ps -a
