@@ -15,6 +15,7 @@ periodics:
         - -c
         - |
           bash /usr/local/bin/dockerd-entrypoint.sh & 
+          docker login -u "$SECRET_USERNAME" -p "$SECRET_PASSWORD" 
           if grep -Fq "index.docker.io" ~/.docker/config.json
           then
             echo "docker was logged in, we will run hello-world"
