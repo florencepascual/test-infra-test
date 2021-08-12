@@ -1,0 +1,48 @@
+periodics:
+  - name: docker-all-in-one-test
+    labels:
+      preset-secrets: "true"
+    cluster: k8s-ppc64le-cluster
+    decorate: true
+    always_run: true
+    interval: 2m
+    spec:
+      containers:
+      - image: quay.io/alunsin/all_in_one_dind
+        command:
+        - /bin/bash
+        args:
+        - -c
+        - |
+          bash /usr/local/bin/dockerd-entrypoint.sh &
+          if ! grep -Fq "index.docker.io" /root/.docker/config.json
+          then
+            docker login -u "$SECRET_USERNAME" -p "$SECRET_PASSWORD" 
+            docker login -u $SECRET_USERNAME -p $SECRET_PASSWORD 
+            docker run hello-world
+            docker run alpine
+            docker ps -a
+          fi
+        resources: {}
+        terminationMessagePolicy: FallbackToLogsOnError
+        securityContext:
+          privileged: true
+        volumeMounts:
+        - name: docker-root
+          mountPath: /var/lib/docker
+        env:
+          - name: SECRET_USERNAME
+            valueFrom:
+              secretKeyRef:
+                name: docker-secret
+                key: username
+          - name: SECRET_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: docker-secret
+                key: password
+      restartPolicy: Never
+      terminationGracePeriodSeconds: 18
+      volumes:
+      - name: docker-root
+        emptyDir: {}
