@@ -1,4 +1,4 @@
-# test with environment variables
+# test with environment variables WORKING
 
 periodics:
   - name: docker-all-in-one-test
