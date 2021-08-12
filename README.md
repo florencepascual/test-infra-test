@@ -31,6 +31,14 @@ on x86 to set KUBECONFIG
 export KUBECONFIG='/home/fpascual/.kube/kind-config-mkpod'
 ```
 
+on power
+
+```
+sudo minikube start
+rm pod.yaml
+nano pod.yaml
+kubectl apply -f pod.yaml
+```
 
 
 ### Running the pj-on-kind script
