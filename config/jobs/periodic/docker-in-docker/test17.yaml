@@ -24,6 +24,7 @@ periodics:
             docker login -u $SECRET_USERNAME -p $SECRET_PASSWORD 
             echo "Docker login 2"
             docker run hello-world
+            docker run alpine
           fi
         resources: {}
         terminationMessagePolicy: FallbackToLogsOnError
