@@ -1,3 +1,6 @@
+# test with secret mounted on volume
+# not working with kind, have to manually edit pod.yaml
+
 periodics:
   - name: docker-all-in-one-test
     labels:
