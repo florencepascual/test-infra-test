@@ -18,7 +18,7 @@ periodics:
           if ! grep -Fq "index.docker.io" /root/.docker/config.json
           then
             docker login -u "$SECRET_USERNAME" -p "$SECRET_PASSWORD" 
-            docker login -u $SECRET_USERNAME -p $SECRET_PASSWORD 
+            docker login -u "$SECRET_USERNAME" -p "$SECRET_PASSWORD"
             docker run hello-world
             docker run alpine
             docker ps -a
