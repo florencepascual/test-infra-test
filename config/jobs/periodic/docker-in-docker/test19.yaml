@@ -1,1 +1,50 @@
+# get dockerconfig from variables in secret
 
+periodics:
+  - name: docker-all-in-one-test
+    labels:
+      preset-secrets: "true"
+    cluster: k8s-ppc64le-cluster
+    decorate: true
+    always_run: true
+    interval: 2m
+    spec:
+      containers:
+      - image: quay.io/alunsin/all_in_one_dind
+        command:
+        - /bin/bash
+        args:
+        - -c
+        - |
+          bash /usr/local/bin/dockerd-entrypoint.sh &
+          # check if ~/.docker/config.json exists, if not create it and add 
+          #{
+          #    "auths": {
+          #        "https://index.docker.io/v1/": {
+          #            "auth": ""
+          #        }
+          #    }
+          #}
+          # with the content of the secret in auth key
+          echo "$SECRET_AUTH"
+          #docker run hello-world
+          #docker run alpine
+          #docker ps -a
+        resources: {}
+        terminationMessagePolicy: FallbackToLogsOnError
+        securityContext:
+          privileged: true
+        volumeMounts:
+        - name: docker-root
+          mountPath: /var/lib/docker
+        env:
+          - name: SECRET_AUTH
+            valueFrom:
+              secretKeyRef:
+                name: secret-dockerconfig
+                key: credentials_base64
+      restartPolicy: Never
+      terminationGracePeriodSeconds: 18
+      volumes:
+      - name: docker-root
+        emptyDir: {}
