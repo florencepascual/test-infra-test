@@ -41,8 +41,8 @@ periodics:
           - name: SECRET_AUTH
             valueFrom:
               secretKeyRef:
-                name: secret-dockerconfig
-                key: credentials_base64
+                name: docker-cred
+                key: .dockerconfigjson
       restartPolicy: Never
       terminationGracePeriodSeconds: 18
       volumes:
