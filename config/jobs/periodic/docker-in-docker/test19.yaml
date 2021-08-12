@@ -17,17 +17,30 @@ periodics:
         - -c
         - |
           bash /usr/local/bin/dockerd-entrypoint.sh &
-          # check if ~/.docker/config.json exists, if not create it and add 
-          #{
-          #    "auths": {
-          #        "https://index.docker.io/v1/": {
-          #            "auth": ""
-          #        }
-          #    }
-          #}
-          # with the content of the secret in auth key
+          #DOCKER_CFG="/root/.docker/config.json"
+          #if ! test -f "$DOCKER_CFG"
+          #then
+          #  touch "$DOCKER_CFG"
+          #  echo "$DOCKER_CFG" created
+          #fi
+          #if test -f "$DOCKER_CFG"
+          #then
+          #  if ! grep -Fq "index.docker.io" "$DOCKER_CFG"
+          #  then
+          cat > /root/.docker/config.json <<EOL
+          {
+              "auths": {
+                  "https://index.docker.io/v1/": {
+                      "auth": ${SECRET_AUTH}
+                  }
+              }
+          }
+          EOL
+            #fi
+          #fi
+          cat /root/.docker/config.json
           echo "$SECRET_AUTH"
-          #docker run hello-world
+          docker run hello-world
           #docker run alpine
           #docker ps -a
         resources: {}
