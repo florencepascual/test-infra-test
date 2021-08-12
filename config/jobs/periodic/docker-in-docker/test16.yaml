@@ -17,21 +17,19 @@ periodics:
         - -c
         - |
           echo "hello"
-          while ((/usr/local/bin/dockerd-entrypoint.sh)) 
-          do
-            echo "Hello" 
+          bash /usr/local/bin/dockerd-entrypoint.sh &
+          echo "Hello" 
+          docker login -u "$SECRET_USERNAME" -p "$SECRET_PASSWORD" 
+          echo "Docker login" 
+          if grep -Fq "index.docker.io" ~/.docker/config.json
+          then
+            echo "docker was logged in, we will run hello-world"
+            docker run hello-world
+          else
             docker login -u $SECRET_USERNAME -p $SECRET_PASSWORD 
-            echo "Docker login" 
-            if grep -Fq "index.docker.io" ~/.docker/config.json
-            then
-              echo "docker was logged in, we will run hello-world"
-              docker run hello-world
-            else
-              docker login -u $SECRET_USERNAME -p $SECRET_PASSWORD 
-              echo "Docker login 2"
-              docker run hello-world
-            fi
-          done
+            echo "Docker login 2"
+            docker run hello-world
+          fi
         resources: {}
         terminationMessagePolicy: FallbackToLogsOnError
         securityContext:
