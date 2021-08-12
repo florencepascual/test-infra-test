@@ -40,6 +40,27 @@ nano pod.yaml
 kubectl apply -f pod.yaml
 ```
 
+### Secret
+
+```
+nano docker-secret.yaml
+```
+
+```yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: docker-secret
+type: kubernetes.io/basic-auth
+stringData:
+  username: florencepascual
+  password: 
+```
+https://kubernetes.io/docs/tasks/configmap-secret/managing-secret-using-config-file/
+
+```
+kubectl apply -f ./docker-secret.yaml
+```
 
 ### Running the pj-on-kind script
 
