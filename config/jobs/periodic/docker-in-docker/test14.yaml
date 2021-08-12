@@ -16,7 +16,21 @@ periodics:
         - /bin/bash
         args:
         - -c
-        - "/usr/local/bin/dockerd-entrypoint.sh & ls /etc/secrets & docker login -u /etc/secrets/username -p /etc/secrets/password"
+        - |
+          echo "hello"
+          bash /usr/local/bin/dockerd-entrypoint.sh &
+          echo "Hello" 
+          docker login -u /etc/secrets/username -p /etc/secrets/password
+          echo "Docker login" 
+          if grep -Fq "index.docker.io" ~/.docker/config.json
+          then
+            echo "docker was logged in, we will run hello-world"
+            docker run hello-world
+          else
+            docker login -u /etc/secrets/username -p /etc/secrets/password
+            echo "Docker login 2"
+            docker run hello-world
+          fi
         resources: {}
         terminationMessagePolicy: FallbackToLogsOnError
         securityContext:
@@ -43,7 +57,9 @@ periodics:
   - name: secrets
     secret:
       secretName: docker-secret
+      defaultMode: 0500
   volumeMounts:
   - name: secrets
     mountPath: /etc/secrets
-    readOnly: true        
+    readOnly: true    
+    
