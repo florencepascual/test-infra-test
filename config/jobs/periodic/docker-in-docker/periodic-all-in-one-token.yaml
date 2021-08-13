@@ -14,12 +14,14 @@ periodics:
         - -c
         - |
           bash /usr/local/bin/dockerd-entrypoint.sh &
-          if ! -d /root/.docker 
+          if ! test -d /root/.docker 
           then
+            echo "No .docker found"
             mkdir /root/.docker
           fi
-          if ! grep -Fq "index.docker.io" /root/.docker/config.json
+          if ! test -f /root/.docker/config.json
           then
+            echo "No config.json found"
             echo "$SECRET_AUTH" > /root/.docker/config.json
             docker run hello-world
             docker run alpine
