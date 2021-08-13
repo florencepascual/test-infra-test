@@ -66,18 +66,18 @@ kubectl apply -f ./docker-secret.yaml
 
 ```
 # CONFIG_PATH and JOB_CONFIG_PATH need to be absolute path
-export CONFIG_PATH="/home/fpascual/test-infra/config/prow/config-kubernetes.yaml" 
+export CONFIG_PATH="/home/fpascual/test-infra-test/config/prow/config-kubernetes.yaml" 
 
-export JOB_CONFIG_PATH="/home/fpascual/test-infra/config/jobs/all-in-one/all-in-one/periodic-all-in-one-test.yaml"
+export JOB_CONFIG_PATH="/home/fpascual/test-infra-test/config/jobs/all-in-one/all-in-one/periodic-all-in-one-test.yaml"
 
-export CONFIG_PATH="/home/fpascual/test-infra/config/prow/config-ppc64le.yaml" 
-export JOB_CONFIG_PATH="/home/fpascual/test-infra/config/jobs/docker-in-docker/periodic-all-in-one.yaml"
+export CONFIG_PATH="/home/fpascual/test-infra-test/config/prow/config-ppc64le.yaml" 
+export JOB_CONFIG_PATH="/home/fpascual/test-infra-test/config/jobs/periodic/docker-in-docker/periodic-all-in-one.yaml"
 
-./test-infra/prow/pj-on-kind.sh docker-all-in-one-test
+./test-infra-test/hack/test-pj.sh docker-all-in-one-test
 
 
-rm test-infra/config/jobs/docker-in-docker/periodic-all-in-one.yaml
-nano test-infra/config/jobs/docker-in-docker/periodic-all-in-one.yaml
+rm test-infra-test/config/jobs/periodic/docker-in-docker/periodic-all-in-one.yaml
+nano test-infra-test/config/jobs/periodic/docker-in-docker/periodic-all-in-one.yaml
 ```
 
 ### Testing manually
