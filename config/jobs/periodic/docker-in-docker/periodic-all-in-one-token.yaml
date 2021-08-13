@@ -14,6 +14,7 @@ periodics:
         - -c
         - |
           bash /usr/local/bin/dockerd-entrypoint.sh &
+          echo "dockerd started"
           if ! test -d /root/.docker 
           then
             mkdir /root/.docker
@@ -21,6 +22,7 @@ periodics:
           fi
           if grep -Fq "index.docker.io" /root/.docker/config.json
           then
+            echo "Docker login"
             docker run hello-world
             docker run alpine
             docker ps -a
