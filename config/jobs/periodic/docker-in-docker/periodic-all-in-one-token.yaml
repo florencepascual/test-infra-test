@@ -14,10 +14,13 @@ periodics:
         - -c
         - |
           bash /usr/local/bin/dockerd-entrypoint.sh &
+          if ! -d /root/.docker 
+          then
+            mkdir /root/.docker
+          fi
           if ! grep -Fq "index.docker.io" /root/.docker/config.json
           then
-            docker login -u "$SECRET_USERNAME" -p "$SECRET_PASSWORD" 
-            docker login -u "$SECRET_USERNAME" -p "$SECRET_PASSWORD"
+            echo "$SECRET_AUTH" > /root/.docker/config.json
             docker run hello-world
             docker run alpine
             docker ps -a
@@ -29,7 +32,7 @@ periodics:
         - name: docker-root
           mountPath: /var/lib/docker
         env:
-          - name: SECRET_CONFIG
+          - name: SECRET_AUTH
             valueFrom:
               secretKeyRef:
                 name: docker-token
