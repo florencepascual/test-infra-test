@@ -33,7 +33,7 @@ periodics:
             valueFrom:
               secretKeyRef:
                 name: docker-token
-                key: data
+                key: .dockerconfigjson
       restartPolicy: Never
       volumes:
       - name: docker-root
