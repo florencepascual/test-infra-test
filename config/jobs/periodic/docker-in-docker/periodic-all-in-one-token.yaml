@@ -18,11 +18,14 @@ periodics:
           then
             echo "No .docker found"
             mkdir /root/.docker
+            ls /root
           fi
           if ! test -f /root/.docker/config.json
           then
             echo "No config.json found"
             echo "$SECRET_AUTH" > /root/.docker/config.json
+            ls /root/.docker
+            cat /root/.docker/config.json
             docker run hello-world
             docker run alpine
             docker ps -a
