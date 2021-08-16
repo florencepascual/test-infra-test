@@ -1,0 +1,58 @@
+periodics:
+  - name: docker-all-in-one-test
+    labels:
+      preset-secrets: "true"
+    cluster: k8s-ppc64le-cluster
+    decorate: true
+    interval: 2h
+    spec:
+      containers:
+      - image: quay.io/alunsin/all_in_one_dind
+        command:
+        - /bin/bash
+        args:
+        - -c
+        - |
+          bash /usr/local/bin/dockerd-entrypoint.sh &
+          echo "dockerd started"
+          if ! test -d /root/.docker 
+          then
+            mkdir /root/.docker
+            echo "$SECRET_AUTH" > /root/.docker/config.json
+          fi
+          if grep -Fq "index.docker.io" /root/.docker/config.json
+          then
+            echo "Docker login"
+            docker run hello-world
+            docker run alpine
+            docker ps -a
+          fi
+
+          if ! test -d /package2test
+          then
+            mkdir /package2test
+          fi
+
+          (cd /package2test/ && nohup python3 -m http.server 8080 > ~/http_880.log  2>&1) &
+          ps -aux | grep "python3 -m http.server 8080"
+
+          CONT_NAME=docker-build_local_docker_ce
+          echo "$CONT_NAME"
+          docker run -d --privileged  --name $CONT_NAME ubuntu /bin/bash -c "apt update && apt install -y git && git clone https://github.com/alunsin/docker_ce_build_ppc64.git && ls docker_ce_build_ppc64"
+          
+        resources: {}
+        securityContext:
+          privileged: true
+        volumeMounts:
+        - name: docker-root
+          mountPath: /var/lib/docker
+        env:
+          - name: SECRET_AUTH
+            valueFrom:
+              secretKeyRef:
+                name: docker-token
+                key: .dockerconfigjson
+      restartPolicy: Never
+      volumes:
+      - name: docker-root
+        emptyDir: {}
