@@ -36,6 +36,8 @@ periodics:
           (cd /package2test/ && nohup python3 -m http.server 8080 > ~/http_880.log  2>&1) &
           ps -aux | grep "python3 -m http.server 8080"
 
+          git clone https://github.com/florencepascual/docker_ce_build_ppc64
+          
           CONT_NAME=docker-build_local_docker_ce
           echo "$CONT_NAME"
           docker run -d --privileged  --name $CONT_NAME ubuntu /bin/bash -c "apt update && apt install -y git && git clone https://github.com/alunsin/docker_ce_build_ppc64.git && ls docker_ce_build_ppc64"
