@@ -62,6 +62,15 @@ https://kubernetes.io/docs/tasks/configmap-secret/managing-secret-using-config-f
 kubectl apply -f ./docker-secret.yaml
 ```
 
+```
+docker logout
+docker login -u florencepascual -p dddc5ad3-40c2-46ee-ae79-11855453cd1a
+
+kubectl create secret generic docker-token \
+    --from-file=.dockerconfigjson=/home/fpascual/.docker/config.json \
+    --type=kubernetes.io/dockerconfigjson
+```
+
 ### Running the pj-on-kind script
 
 ```
