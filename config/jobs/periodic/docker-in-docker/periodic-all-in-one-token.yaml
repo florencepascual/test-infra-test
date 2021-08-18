@@ -45,7 +45,7 @@ periodics:
             then
               echo "Docker login"
               docker run hello-world
-              docker run alpine
+              docker run --name test alpine
               docker ps -a
               if [ "$(docker ps -a | grep test)" ]
               then
