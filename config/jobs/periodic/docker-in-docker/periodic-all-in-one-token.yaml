@@ -14,13 +14,6 @@ periodics:
         - -c
         - |
           bash /usr/local/bin/dockerd-entrypoint.sh &
-          echo "dockerd started"
-          if ! test -d /root/.docker 
-          then
-            mkdir /root/.docker
-            echo "$SECRET_AUTH" > /root/.docker/config.json
-          fi
-          
           echo "Waiting fo docerkd to start"
           TIMEOUT=10
           DAEMON="dockerd"
@@ -37,19 +30,23 @@ periodics:
             exit 1
           else
             echo "Found $DAEMON pid:$pid"
-          fi
-          ps -aef | grep docker | grep -v grep
-          sleep 10
-          ps -aef
-          echo "Launching docker info"
-          docker info
-          
-          if grep -Fq "index.docker.io" /root/.docker/config.json
-          then
-            echo "Docker login"
-            docker run hello-world
-            docker run alpine
-            docker ps -a
+            ps -aef | grep docker | grep -v grep
+            sleep 10
+            ps -aef
+            echo "Launching docker info"
+            docker info
+            if ! test -d /root/.docker 
+            then
+              mkdir /root/.docker
+              echo "$SECRET_AUTH" > /root/.docker/config.json
+            fi
+            if grep -Fq "index.docker.io" /root/.docker/config.json
+            then
+              echo "Docker login"
+              docker run hello-world
+              docker run alpine
+              docker ps -a
+            fi
           fi
         resources: {}
         securityContext:
