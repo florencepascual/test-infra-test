@@ -49,6 +49,7 @@ periodics:
               docker ps -a
               if [ "$(docker ps -a | grep test)" ]
               then
+                ps -e | grep $DAEMON
                 kill -9 $pid
               fi
             fi
