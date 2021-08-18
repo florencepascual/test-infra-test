@@ -14,8 +14,7 @@ periodics:
         - -c
         - |
           bash /usr/local/bin/dockerd-entrypoint.sh &
-          
-          echo "Waiting fo docerkd to start"
+          echo "Waiting for dockerd to start"
           TIMEOUT=10
           DAEMON="dockerd"
           i=0
@@ -26,20 +25,26 @@ periodics:
             sleep 2
           done
           pid=`/usr/bin/pgrep $DAEMON`
-          if [ -z "$pid" ] ; then
+          if [ -z "$pid" ]
+          then
             echo "$DAEMON did not started after $(($TIMEOUT*2)) seconds"
             exit 1
           else
             echo "Found $DAEMON pid:$pid"
+            ps -aef | grep docker | grep -v grep
+            sleep 10
+            ps -aef
+            echo "Launching docker info"
+            docker info
+            docker run hello-world
+            docker run --name test alpine
+            docker ps -a
+            if [ "$(docker ps -a | grep test)" ]
+            then
+              ps -e | grep $DAEMON
+              kill -9 $pid
+            fi
           fi
-          ps -aef | grep docker | grep -v grep
-          sleep 10
-          ps -aef
-          echo "Launching docker info"
-          docker info
-          docker run hello-world
-          docker run alpine
-          docker ps -a
         resources: {}
         securityContext:
           privileged: true
