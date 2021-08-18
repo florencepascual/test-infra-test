@@ -14,7 +14,7 @@ periodics:
         - -c
         - |
           bash /usr/local/bin/dockerd-entrypoint.sh &
-          echo "Waiting fo docerkd to start"
+          echo "Waiting for dockerd to start"
           TIMEOUT=10
           DAEMON="dockerd"
           i=0
@@ -49,7 +49,6 @@ periodics:
               docker ps -a
               if [ "$(docker ps -a | grep test)" ]
               then
-                pid=$(ps -e | grep "dockerd")
                 kill -9 $pid
               fi
             fi
