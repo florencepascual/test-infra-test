@@ -25,7 +25,8 @@ periodics:
             sleep 2
           done
           pid=`/usr/bin/pgrep $DAEMON`
-          if [ -z "$pid" ] ; then
+          if [ -z "$pid" ]
+          then
             echo "$DAEMON did not started after $(($TIMEOUT*2)) seconds"
             exit 1
           else
@@ -46,6 +47,11 @@ periodics:
               docker run hello-world
               docker run alpine
               docker ps -a
+              if [ "$(docker ps -a | grep test)" ]
+              then
+                pid=$(ps -e | grep "dockerd")
+                kill -9 $pid
+              fi
             fi
           fi
         resources: {}
