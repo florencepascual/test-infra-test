@@ -20,7 +20,6 @@ periodics:
           i=0
           while [ $i -lt $TIMEOUT ] && ! /usr/bin/pgrep $DAEMON
           do
-            echo "Number: $i"
             i=$((i+1))
             sleep 2
           done
