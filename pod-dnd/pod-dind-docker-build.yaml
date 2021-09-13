@@ -87,7 +87,6 @@ spec:
             echo "There is no env.list"
           fi
           
-
           # generate the env-distrib.list
           echo "***** env-distrib.list *****"
           mkdir docker-ce-packaging
@@ -110,8 +109,6 @@ spec:
           if [[ -f env-distrib.list ]]
           # if there is env.list and env-distrib.list
           then
-            rm env-distrib.list
-            echo DEBS=\"debian-bullseye debian-buster ubuntu-bionic ubuntu-focal ubuntu-groovy ubuntu-hirsute\" > env-distrib.list
             # check if there are two variables in env-distrib.list
             if grep -Fq "DEBS" env-distrib.list && grep -Fq "RPMS" env-distrib.list
             then 
@@ -121,15 +118,13 @@ spec:
               exit 1
             fi
             source env-distrib.list
-            echo $DOCKER_VERS
-            echo $CONTAINERD_VERS
-            echo $PACKAGING_REF
-            echo $DEBS
-            echo $RPMS
           else
             echo "There is no env.list and/or env-distrib.list"
             exit 1
           fi
+
+          # build docker_ce and containerd
+          echo "****** BUILD ******"
         fi
       fi
     image: quay.io/alunsin/all_in_one_dind
