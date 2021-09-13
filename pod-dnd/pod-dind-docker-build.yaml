@@ -11,7 +11,7 @@ spec:
     - /bin/bash
     args:
     - -c
-      |
+    - |
       # path to the github repository
       PATH_GITHUB="https://github.com/florencepascual/docker_ce_build_ppc64.git"
       DIR_GITHUB="docker_ce_build_ppc64"
