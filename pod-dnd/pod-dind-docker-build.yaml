@@ -71,7 +71,7 @@ spec:
           then
             # test remove some variables
             # check there are 3 env variables in env.list
-            if grep -Fxq "DOCKER_VERS" env.list && grep -Fxq "CONTAINERD_VERS" env.list && grep -Fxq "PACKAGING_REF" env.list
+            if grep -Fq "DOCKER_VERS" env.list && grep -Fq "CONTAINERD_VERS" env.list && grep -Fq "PACKAGING_REF" env.list
             then 
               echo "DOCKER_VERS, CONTAINERD_VERS, PACKAGING_REF are in env.list"
             else 
@@ -112,7 +112,7 @@ spec:
           # if there is env.list and env-distrib.list
           then
             # check if there are two variables in env-distrib.list
-            if grep -Fxq "DEBS" env.list && grep -Fxq "RPMS" env.list
+            if grep -Fq "DEBS" env.list && grep -Fq "RPMS" env.list
             then 
               echo "DEBS and RPMS are in env.list"
             else 
