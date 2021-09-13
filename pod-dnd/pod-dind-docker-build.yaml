@@ -135,6 +135,7 @@ spec:
           echo "*** *** BUILD *** ***"
           CONT_NAME=docker-build
           docker run --env SECRET_AUTH --init -d -v /workspace:/workspace --privileged --name $CONT_NAME --entrypoint ./${DIR_GITHUB}/${PATH_SCRIPTS}/build.sh ${PATH_IMAGE_BUILD}/docker_ce_build
+          docker logs --follow $CONT_NAME
           status_code="$(docker container wait $CONT_NAME)"
           if [[ ${status_code} -ne 0 ]]
           then
@@ -160,6 +161,8 @@ spec:
 
           # test the packages
           echo "*** *** * TEST * *** ***"
+          CONT_NAME=docker-test
+          docker run --env SECRET_AUTH --init -d -v /workspace:/workspace --privileged --name $CONT_NAME --entrypoint ./docker_ce_build_ppc64/hack/docker-in-docker/test.sh ${PATH_IMAGE_BUILD}/docker_ce_build
 
         fi
       fi
