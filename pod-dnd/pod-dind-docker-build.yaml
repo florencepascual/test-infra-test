@@ -13,7 +13,7 @@ spec:
     - -c
     - |
       # path to the github repository
-      PATH_GITHUB="https://github.com/florencepascual/docker_ce_build_p5pc64.git"
+      PATH_GITHUB="https://github.com/florencepascual/docker_ce_build_ppc64.git"
       DIR_GITHUB="docker_ce_build_ppc64"
       # path to the image for building and testing
       PATH_IMAGE_BUILD="quay.io/florencepascual"
@@ -49,7 +49,8 @@ spec:
           docker run --env SECRET_S3 -d -v /workspace:/workspace --privileged --name $CONT_NAME debian:bullseye /bin/bash -c "/workspace/${DIR_GITHUB}/${PATH_SCRIPTS}/get_env.sh"
           status_code="$(docker container wait $CONT_NAME)"
           echo $status_code
-
+          
+          pwd
           ls /
           ls /workspace
           ls /workspace/docker_ce_build_ppc64
@@ -79,8 +80,6 @@ spec:
           echo RPMS=\"`cd docker-ce-packaging/rpm && ls -1d centos-* fedora-*`\" >> env-distrib.list
 
           rm -rf docker-ce-packaging
-
-          rm env.list
 
           # check the env.list (versions of docker-ce, containerd and list of packages)
           if [[ -f env.list && -f env-distrib.list ]]
