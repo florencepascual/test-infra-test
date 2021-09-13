@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  name: test-als-all-in-one-pod
+  name: pod-dind-docker-build
 spec:
   automountServiceAccountToken: false
   containers:
@@ -39,14 +39,49 @@ spec:
         fi
         if grep -Fq "index.docker.io" /root/.docker/config.json
         then
-          echo "Docker login"
-          docker run hello-world
-          docker run --name test alpine
-          docker ps -a
-          if [ "$(docker ps -a | grep test)" ]
+          # get the env file and the dockertest repo and the latest built of containerd if we don't want to build containerd
+          CONT_NAME=docker_s3_env
+          docker run --env SECRET_S3 -d -v /workspace:/workspace --privileged --name $CONT_NAME debian:bullseye /bin/bash -c "/workspace/${DIR_GITHUB}/${PATH_SCRIPTS}/get_env.sh"
+          status_code="$(docker container wait $CONT_NAME)"
+          echo $status_code
+
+          ls 
+
+          if [[ ${status_code} -ne 0 ]]
           then
-            ps -e | grep $DAEMON
-            kill -9 $pid
+              exit
+          fi
+
+          set -o allexport
+          source env.list
+
+          # generate the env-distrib.list
+          mkdir docker-ce-packaging
+          pushd docker-ce-packaging
+          git init
+          git remote add origin  https://github.com/docker/docker-ce-packaging.git
+          git fetch --depth 1 origin ${PACKAGING_REF}
+          git checkout FETCH_HEAD
+
+          make REF=${DOCKER_VERS} checkout
+          popd
+
+          # get the packages list in the env_distrib.list
+          echo DEBS=\"`cd docker-ce-packaging/deb && ls -1d debian-* ubuntu-*`\" > env-distrib.list
+          echo RPMS=\"`cd docker-ce-packaging/rpm && ls -1d centos-* fedora-*`\" >> env-distrib.list
+
+          rm -rf docker-ce-packaging
+
+          # check the env.list (versions of docker-ce, containerd and list of packages)
+          if [[ -f env.list && -f env-distrib.list ]]
+          # if there is env.list and env-distrib.list
+          then
+              set -o allexport
+              source env.list
+              source env-distrib.list
+          else
+              echo "There is no env.list and/or env-distrib.list"
+              exit 1
           fi
         fi
       fi
