@@ -97,9 +97,10 @@ spec:
           # if there is env.list and env-distrib.list
           then
             # check if there are all 5 environment variables
-            set -o allexport
-            source env.list
             source env-distrib.list
+            echo $DOCKER_VERS
+            echo $CONTAINERD_VERS
+            echo $PACKAGING_REF
             echo $DEBS
             echo $RPMS
           else
