@@ -30,7 +30,6 @@ spec:
       fi
       wget -O ${DIR_GITHUB}/${PATH_SCRIPTS}/dockerd-entrypoint.sh https://raw.githubusercontent.com/docker-library/docker/master/dockerd-entrypoint.sh
       chmod a+x ${DIR_GITHUB}/${PATH_SCRIPTS}/*.sh
-      ls ${DIR_GITHUB}/${PATH_SCRIPTS}
 
       bash /usr/local/bin/dockerd-entrypoint.sh &
       source ./${DIR_GITHUB}/${PATH_SCRIPTS}/dockerd-starting.sh
