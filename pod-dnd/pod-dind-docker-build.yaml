@@ -67,12 +67,27 @@ spec:
               exit 1
           fi
           ls
-
-          set -o allexport
-          source env.list
-          echo $DOCKER_VERS
-          echo $CONTAINERD_VERS
-          echo $PACKAGING_REF
+          if [[ -f env.list ]]
+          then
+            # test remove some variables
+            # check there are 3 env variables in env.list
+            if grep -Fxq "DOCKER_VERS" env.list && grep -Fxq "CONTAINERD_VERS" env.list && grep -Fxq "PACKAGING_REF" env.list
+            then 
+              echo "DOCKER_VERS, CONTAINERD_VERS, PACKAGING_REF are in env.list"
+            else 
+              echo "DOCKER_VERS, CONTAINERD_VERS and/or PACKAGING_REF are not in env.list"
+              exit 1
+            fi
+            
+            set -o allexport
+            source env.list
+            echo $DOCKER_VERS
+            echo $CONTAINERD_VERS
+            echo $PACKAGING_REF
+          else
+            echo "There is no env.list"
+          fi
+          
 
           # generate the env-distrib.list
           echo "***** env-distrib.list *****"
@@ -93,10 +108,17 @@ spec:
           rm -rf docker-ce-packaging
 
           # check the env.list (versions of docker-ce, containerd and list of packages)
-          if [[ -f env.list && -f env-distrib.list ]]
+          if [[ -f env-distrib.list ]]
           # if there is env.list and env-distrib.list
           then
-            # check if there are all 5 environment variables
+            # check if there are two variables in env-distrib.list
+            if grep -Fxq "DEBS" env.list && grep -Fxq "RPMS" env.list
+            then 
+              echo "DEBS and RPMS are in env.list"
+            else 
+              echo "DEBS and/or RPMS are not in env.list"
+              exit 1
+            fi
             source env-distrib.list
             echo $DOCKER_VERS
             echo $CONTAINERD_VERS
