@@ -105,6 +105,11 @@ spec:
 
           rm -rf docker-ce-packaging
 
+          # CHANGE ENV-DISTRIB.LIST HERE
+          rm env-distrib.list
+          echo DEBS=\"debian-bullseye ubuntu-hirsute\" > env-distrib.list
+          echo RPMS=\"centos-8 fedora-33\" >> env-distrib.list
+
           # check the env.list (versions of docker-ce, containerd and list of packages)
           if [[ -f env-distrib.list ]]
           # if there is env.list and env-distrib.list
@@ -125,6 +130,20 @@ spec:
 
           # build docker_ce and containerd
           echo "****** BUILD ******"
+          CONT_NAME=docker-build
+          docker pull ${PATH_IMAGE_BUILD}/docker_ce_build
+          if [[ $? -ne 0 ]]
+          then
+            echo "The image has not been pulled successfully."
+            exit 1
+          fi
+          docker run --env SECRET_AUTH --init -d -v /workspace:/workspace --privileged --name $CONT_NAME --entrypoint ./${DIR_GITHUB}/${PATH_SCRIPTS}/build.sh ${PATH_IMAGE_BUILD}/docker_ce_build
+          status_code="$(docker container wait $CONT_NAME)"
+          if [[ ${status_code} -ne 0 ]]
+          then
+            echo "The docker supposed to build the packages has failed."
+            exit 1
+          fi
         fi
       fi
     image: quay.io/alunsin/all_in_one_dind
