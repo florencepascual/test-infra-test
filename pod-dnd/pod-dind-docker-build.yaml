@@ -70,6 +70,10 @@ spec:
           if [[ -f env.list ]]
           then
             # test remove some variables
+            rm env.list
+            DOCKER_VERS="v20.10.8" > env.list
+            CONTAINERD_VERS="0" >> env.list
+            PACKAGING_REF="5a28c77f52148f682ab1165dfcbbbad6537b148f" >> env.list
             # check there are 3 env variables in env.list
             if grep -Fq "DOCKER_VERS" env.list && grep -Fq "CONTAINERD_VERS" env.list && grep -Fq "PACKAGING_REF" env.list
             then 
@@ -78,7 +82,18 @@ spec:
               echo "DOCKER_VERS, CONTAINERD_VERS and/or PACKAGING_REF are not in env.list"
               exit 1
             fi
-            
+
+            rm env.list
+            CONTAINERD_VERS="v1.4.9" > env.list
+            PACKAGING_REF="5a28c77f52148f682ab1165dfcbbbad6537b148f" >> env.list
+            if grep -Fq "DOCKER_VERS" env.list && grep -Fq "CONTAINERD_VERS" env.list && grep -Fq "PACKAGING_REF" env.list
+            then 
+              echo "DOCKER_VERS, CONTAINERD_VERS, PACKAGING_REF are in env.list"
+            else 
+              echo "DOCKER_VERS, CONTAINERD_VERS and/or PACKAGING_REF are not in env.list"
+              exit 1
+            fi
+
             set -o allexport
             source env.list
             echo $DOCKER_VERS
@@ -111,6 +126,8 @@ spec:
           if [[ -f env-distrib.list ]]
           # if there is env.list and env-distrib.list
           then
+            rm env-distrib.list
+            echo DEBS=\"debian-bullseye debian-buster ubuntu-bionic ubuntu-focal ubuntu-groovy ubuntu-hirsute\" > env-distrib.list
             # check if there are two variables in env-distrib.list
             if grep -Fq "DEBS" env-distrib.list && grep -Fq "RPMS" env-distrib.list
             then 
