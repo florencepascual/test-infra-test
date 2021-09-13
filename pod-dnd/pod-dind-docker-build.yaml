@@ -23,6 +23,11 @@ spec:
       PATH_IMAGES="images/docker-in-docker"
 
       git clone ${PATH_GITHUB}
+      if ! test -d ${DIR_GITHUB}
+      then
+        echo "The directory from ${PATH_GITHUB} was not cloned. "
+        exit 1
+      fi
       wget -O ${DIR_GITHUB}/${PATH_SCRIPTS}/dockerd-entrypoint.sh https://raw.githubusercontent.com/docker-library/docker/master/dockerd-entrypoint.sh
       chmod a+x ${DIR_GITHUB}/${PATH_SCRIPTS}/*.sh
       ls ${DIR_GITHUB}/${PATH_SCRIPTS}
