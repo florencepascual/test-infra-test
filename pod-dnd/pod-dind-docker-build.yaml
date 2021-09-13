@@ -13,7 +13,7 @@ spec:
     - -c
     - |
       # path to the github repository
-      PATH_GITHUB="https://github.com/florencepascual/docker_ce_build_ppc64.git"
+      PATH_GITHUB="https://github.com/florencepascual/docker_ce_build_p5pc64.git"
       DIR_GITHUB="docker_ce_build_ppc64"
       # path to the image for building and testing
       PATH_IMAGE_BUILD="quay.io/florencepascual"
@@ -45,11 +45,14 @@ spec:
           status_code="$(docker container wait $CONT_NAME)"
           echo $status_code
 
-          ls 
+          ls /
+          ls /workspace
+          ls /workspace/docker_ce_build_ppc64
 
           if [[ ${status_code} -ne 0 ]]
           then
-              exit
+          echo "The docker to get the env.list and the dockertest has failed."
+              exit 1
           fi
 
           set -o allexport
