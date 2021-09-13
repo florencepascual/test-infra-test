@@ -72,6 +72,8 @@ spec:
 
           rm -rf docker-ce-packaging
 
+          rm env.list
+
           # check the env.list (versions of docker-ce, containerd and list of packages)
           if [[ -f env.list && -f env-distrib.list ]]
           # if there is env.list and env-distrib.list
