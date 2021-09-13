@@ -70,6 +70,9 @@ spec:
 
           set -o allexport
           source env.list
+          echo $DOCKER_VERS
+          echo $CONTAINERD_VERS
+          echo $PACKAGING_REF
 
           # generate the env-distrib.list
           echo "***** env-distrib.list *****"
@@ -97,6 +100,8 @@ spec:
             set -o allexport
             source env.list
             source env-distrib.list
+            echo $DEBS
+            echo $RPMS
             ls
             cat env.list
             cat env-distrib.list
