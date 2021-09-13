@@ -70,10 +70,12 @@ spec:
           if [[ -f env.list ]]
           then
             # test remove some variables
+            echo "&&&&&&& TEST 1 env.list &&&&&&&&"
             rm env.list
             DOCKER_VERS="v20.10.8" > env.list
             CONTAINERD_VERS="0" >> env.list
             PACKAGING_REF="5a28c77f52148f682ab1165dfcbbbad6537b148f" >> env.list
+            cat env.list
             # check there are 3 env variables in env.list
             if grep -Fq "DOCKER_VERS" env.list && grep -Fq "CONTAINERD_VERS" env.list && grep -Fq "PACKAGING_REF" env.list
             then 
@@ -82,7 +84,7 @@ spec:
               echo "DOCKER_VERS, CONTAINERD_VERS and/or PACKAGING_REF are not in env.list"
               exit 1
             fi
-
+            echo "&&&&&&& TEST 2 env.list &&&&&&&&"
             rm env.list
             CONTAINERD_VERS="v1.4.9" > env.list
             PACKAGING_REF="5a28c77f52148f682ab1165dfcbbbad6537b148f" >> env.list
