@@ -112,11 +112,11 @@ spec:
           # if there is env.list and env-distrib.list
           then
             # check if there are two variables in env-distrib.list
-            if grep -Fq "DEBS" env.list && grep -Fq "RPMS" env.list
+            if grep -Fq "DEBS" env.list && grep -Fq "RPMS" env-distrib.list
             then 
-              echo "DEBS and RPMS are in env.list"
+              echo "DEBS and RPMS are in env-distrib.list"
             else 
-              echo "DEBS and/or RPMS are not in env.list"
+              echo "DEBS and/or RPMS are not in env-distrib.list"
               exit 1
             fi
             source env-distrib.list
