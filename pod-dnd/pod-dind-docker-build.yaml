@@ -79,6 +79,9 @@ spec:
               set -o allexport
               source env.list
               source env-distrib.list
+              ls
+              cat env.list
+              cat env-distrib.list
           else
               echo "There is no env.list and/or env-distrib.list"
               exit 1
