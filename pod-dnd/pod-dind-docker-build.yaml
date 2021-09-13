@@ -55,7 +55,7 @@ spec:
         if grep -Fq "index.docker.io" /root/.docker/config.json
         then
           # get the env file and the dockertest repo and the latest built of containerd if we don't want to build containerd
-          echo "**** COS Bucket ****"
+          echo "*** * COS Bucket * ***"
           CONT_NAME=docker_s3_env
           docker run --env SECRET_S3 -d -v /workspace:/workspace --privileged --name $CONT_NAME debian:bullseye /bin/bash -c "/workspace/${DIR_GITHUB}/${PATH_SCRIPTS}/get_env.sh"
           status_code="$(docker container wait $CONT_NAME)"
@@ -88,7 +88,7 @@ spec:
           fi
           
           # generate the env-distrib.list
-          echo "***** env-distrib.list *****"
+          echo "*** ** env-distrib.list ** ***"
           mkdir docker-ce-packaging
           pushd docker-ce-packaging
           git init
@@ -132,15 +132,35 @@ spec:
           fi
 
           # build docker_ce and containerd
-          echo "****** BUILD ******"
+          echo "*** *** BUILD *** ***"
           CONT_NAME=docker-build
-          docker run --env SECRET_AUTH --init -dt -v /workspace:/workspace --privileged --name $CONT_NAME --entrypoint ./${DIR_GITHUB}/${PATH_SCRIPTS}/build.sh ${PATH_IMAGE_BUILD}/docker_ce_build
+          docker run --env SECRET_AUTH --init -d -v /workspace:/workspace --privileged --name $CONT_NAME --entrypoint ./${DIR_GITHUB}/${PATH_SCRIPTS}/build.sh ${PATH_IMAGE_BUILD}/docker_ce_build
           status_code="$(docker container wait $CONT_NAME)"
           if [[ ${status_code} -ne 0 ]]
           then
             echo "The docker supposed to build the packages has failed."
             exit 1
           fi
+
+          # change the containerd environment variable
+          if [[ ${CONTAINERD_VERS} -eq 0 ]]
+          then
+            ls -d /workspace/containerd-*
+            if [[ $? -ne 0 ]]
+            then
+              echo "There is no containerd package."
+              exit 1
+            fi
+            CONTAINERD_VERS=$(eval "ls -d /workspace/containerd-* | cut -d'-' -f2")
+            echo ${CONTAINER_VERS}
+            sed -i 's/CONTAINERD_VERS=0/CONTAINERD_VERS='${CONTAINERD_VERS}'/g' env.list
+            cat env.list
+            ls /workspace
+          fi
+
+          # test the packages
+          echo "*** *** * TEST * *** ***"
+
         fi
       fi
     image: quay.io/alunsin/all_in_one_dind
