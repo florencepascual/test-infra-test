@@ -77,9 +77,9 @@ spec:
               echo "DOCKER_VERS, CONTAINERD_VERS and/or PACKAGING_REF are not in env.list"
               exit 1
             fi
-
             set -o allexport
             source env.list
+            echo "DEBUG ENV.LIST"
             echo $DOCKER_VERS
             echo $CONTAINERD_VERS
             echo $PACKAGING_REF
@@ -123,20 +123,17 @@ spec:
               exit 1
             fi
             source env-distrib.list
+            echo "DEBUG ENV-DISTRIB.LIST"
+            echo $DEBS
+            echo $RPMS
           else
-            echo "There is no env.list and/or env-distrib.list"
+            echo "There is no env-distrib.list"
             exit 1
           fi
 
           # build docker_ce and containerd
           echo "****** BUILD ******"
           CONT_NAME=docker-build
-          docker pull ${PATH_IMAGE_BUILD}/docker_ce_build
-          if [[ $? -ne 0 ]]
-          then
-            echo "The image has not been pulled successfully."
-            exit 1
-          fi
           docker run --env SECRET_AUTH --init -d -v /workspace:/workspace --privileged --name $CONT_NAME --entrypoint ./${DIR_GITHUB}/${PATH_SCRIPTS}/build.sh ${PATH_IMAGE_BUILD}/docker_ce_build
           status_code="$(docker container wait $CONT_NAME)"
           if [[ ${status_code} -ne 0 ]]
