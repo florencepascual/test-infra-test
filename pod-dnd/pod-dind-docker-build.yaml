@@ -41,7 +41,7 @@ spec:
       # start the dockerd
       echo "** Dockerd **"
       bash ${PATH_SCRIPTS}/dockerd-entrypoint.sh &
-      source .${PATH_SCRIPTS}/dockerd-starting.sh
+      source ${PATH_SCRIPTS}/dockerd-starting.sh
 
       if [ ! -z "$pid" ]
       then
@@ -134,7 +134,7 @@ spec:
           # build docker_ce and containerd
           echo "*** *** BUILD *** ***"
           CONT_NAME=docker-build
-          docker run --env SECRET_AUTH --init -d -v /workspace:/workspace --privileged --name $CONT_NAME --entrypoint .${PATH_SCRIPTS}/build.sh ${PATH_IMAGE_BUILD}/docker_ce_build
+          docker run --env SECRET_AUTH --env PATH_SCRIPTS --init -d -v /workspace:/workspace --privileged --name $CONT_NAME --entrypoint .${PATH_SCRIPTS}/build.sh ${PATH_IMAGE_BUILD}/docker_ce_build
           docker logs --follow $CONT_NAME
           status_code="$(docker container wait $CONT_NAME)"
           if [[ ${status_code} -ne 0 ]]
@@ -162,7 +162,15 @@ spec:
           # test the packages
           echo "*** *** * TEST * *** ***"
           CONT_NAME=docker-test
-          docker run --env SECRET_AUTH --init -d -v /workspace:/workspace --privileged --name $CONT_NAME --entrypoint .${PATH_SCRIPTS}/test.sh ${PATH_IMAGE_BUILD}/docker_ce_build
+          docker run --env SECRET_AUTH --env PATH_SCRIPTS --init -d -v /workspace:/workspace --privileged --name $CONT_NAME --entrypoint ${PATH_SCRIPTS}/test.sh ${PATH_IMAGE_BUILD}/docker_ce_build
+
+          docker run --env SECRET_AUTH --init -d -v /workspace:/workspace --privileged --name $CONT_NAME ${PATH_IMAGE_BUILD}/docker_ce_build
+
+          # check errors 
+
+          # push to the COS Bucket
+
+          # notifications
 
         fi
       fi
