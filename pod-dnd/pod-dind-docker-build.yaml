@@ -176,12 +176,14 @@ spec:
           NB_DISTROS=$(expr $NB_DEBS + $NB_RPMS)
           NB_BUILD_LOGS=$(eval "find build* | wc -l")
           NB_TEST_LOGS=$(eval "find test* | wc -l")
-          if [[ $NB_BUILD_LOGS == $NB_DISTROS ]] && [[ $NB_TEST_LOGS == $ NB_DISTROS ]]
-          then
+          echo $NB_BUILD_LOGS
+          echo $NB_TEST_LOGS
+          #if [[ $NB_BUILD_LOGS == $NB_DISTROS ]] && [[ $NB_TEST_LOGS == $ NB_DISTROS ]]
+          #then
             # check the test_logs
-          else 
+          #else 
             # error and push to cos bucket ERR
-          fi
+          #fi
 
           # push to the COS Bucket
 
