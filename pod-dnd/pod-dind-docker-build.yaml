@@ -165,22 +165,29 @@ spec:
           echo "*** *** * TEST * *** ***"
           CONT_NAME=docker-test
           docker run --env SECRET_AUTH --env PATH_SCRIPTS --init -d -v /workspace:/workspace --privileged --name $CONT_NAME --entrypoint ${PATH_SCRIPTS}/test.sh ${PATH_IMAGE_BUILD}/docker_ce_build
-
+          status_code="$(docker container wait $CONT_NAME)"
+          if [[ ${status_code} -eq 0 ]]
+          then
+            docker logs $CONT_NAME
+          fi
+          ls /workspace
           # check errors 
-          DIR_TEST="/workspace/test_docker-ce-${DOCKER_VERS}_containerd-${CONTAINERD_VERS}"
+          #DIR_TEST="/workspace/test_docker-ce-${DOCKER_VERS}_containerd-${CONTAINERD_VERS}"
           ls DIR_TEST="/workspace/test_docker-ce-${DOCKER_VERS}_containerd-${CONTAINERD_VERS}"
           # check that for each distrib of each packtype, we have a build log and a test log
           # check if no error in the test log
-          NB_DEBS=$(eval "awk -F\- '{print NF-1}' /workspace/env-distrib.list | awk 'NR==1'")
-          NB_RPMS=$(eval "awk -F\- '{print NF-1}' /workspace/env-distrib.list | awk 'NR==2'")
-          NB_DISTROS=$(expr $NB_DEBS + $NB_RPMS)
-          NB_BUILD_LOGS=$(eval "find build* | wc -l")
-          NB_TEST_LOGS=$(eval "find test* | wc -l")
-          echo $NB_BUILD_LOGS
-          echo $NB_TEST_LOGS
-          #if [[ $NB_BUILD_LOGS == $NB_DISTROS ]] && [[ $NB_TEST_LOGS == $ NB_DISTROS ]]
+          #NB_DEBS=$(eval "awk -F\- '{print NF-1}' /workspace/env-distrib.list | awk 'NR==1'")
+          #NB_RPMS=$(eval "awk -F\- '{print NF-1}' /workspace/env-distrib.list | awk 'NR==2'")
+          #NB_DISTROS=$(expr ${NB_DEBS} + ${NB_RPMS})
+          #NB_BUILD_LOGS=$(eval "find build* | wc -l")
+          #NB_TEST_LOGS=$(eval "find test* | wc -l")
+          #echo ${NB_BUILD_LOGS}
+          #echo ${NB_TEST_LOGS}
+          #if [[ ${NB_BUILD_LOGS} == ${NB_DISTROS} ]] && [[ ${NB_TEST_LOGS} == $ {NB_DISTROS} ]]
           #then
             # check the test_logs
+            #DISTROS=$(eval "echo $DEBS $RPMS | tr '-' '_'")
+            #for DISTRO in ${DISTROS}
           #else 
             # error and push to cos bucket ERR
           #fi
