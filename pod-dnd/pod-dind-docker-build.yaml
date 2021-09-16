@@ -133,7 +133,11 @@ spec:
               exit 1
             fi
             source env-distrib.list
-            echo "&&& DEBUG ENV-DISTRIB.LIST"
+            echo "&&& DEBUG ENV-DISTRIB.LIST AND CHANGE"
+            rm env-distrib.list
+            echo DEBS=\"debian-bullseye\" > env-distrib.list
+            echo RPMS=\"centos-8\" >> env-distrib.list
+            source env-distrib.list
             echo $DEBS
             echo $RPMS
           else
