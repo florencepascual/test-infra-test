@@ -183,7 +183,7 @@ spec:
           then
             docker logs $CONT_NAME &>> ${PATH_LOG}
             echo "WWWWW TESTS CHECK WWWWW"
-            .${PATH_SCRIPTS}/check_tests.sh
+            source ${PATH_SCRIPTS}/check_tests.sh
           fi
           
 
