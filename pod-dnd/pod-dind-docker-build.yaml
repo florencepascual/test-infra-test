@@ -19,45 +19,53 @@ spec:
       PATH_IMAGE_BUILD="quay.io/florencepascual"
       # path to the scripts 
       PATH_SCRIPTS="/workspace/docker_ce_build_ppc64/hack/docker-in-docker"
-      # path to the images for the tests
-      PATH_IMAGES="/workspace/docker_ce_build_ppc64/images/docker-in-docker"
 
       export PATH_SCRIPTS
 
+      # Create the log file
+      echo "Create the log file"
+      PATH_LOG="/workspace/prow-job.log"
+      touch ${PATH_LOG}
+      if ! test -f ${PATH_LOG}
+      then
+        echo "The log file ${PATH_LOG} was not created."
+        exit 1
+      fi
+
       # clone the directory where the scripts are
-      echo "* Git clone *"
+      echo "* Git clone and get the dockerd-entrypoint script*"  &>> ${PATH_LOG}
       git clone ${PATH_GITHUB}
       if ! test -d ${DIR_GITHUB}
       then
-        echo "The directory from ${PATH_GITHUB} was not cloned. "
+        echo "The directory from ${PATH_GITHUB} was not cloned." &>> ${PATH_LOG}
         exit 1
       fi
       wget -O ${PATH_SCRIPTS}/dockerd-entrypoint.sh https://raw.githubusercontent.com/docker-library/docker/master/dockerd-entrypoint.sh
       if ! test -f ${PATH_SCRIPTS}/dockerd-entrypoint.sh
       then
-        echo "The dockerd-entrypoint file was not downloaded. "
+        echo "The dockerd-entrypoint file was not downloaded." &>> ${PATH_LOG}
         exit 1
       fi
       chmod a+x ${PATH_SCRIPTS}/*.sh
 
       # start the dockerd
-      echo "** Dockerd **"
+      echo "** Dockerd **" &>> ${PATH_LOG}
       bash ${PATH_SCRIPTS}/dockerd-entrypoint.sh &
-      source ${PATH_SCRIPTS}/dockerd-starting.sh
+      source ${PATH_SCRIPTS}/dockerd-starting.sh &>> ${PATH_LOG}
 
       if [ ! -z "$pid" ]
       then
         if ! test -d /root/.docker 
         then
           # docker login
-          echo "*** Docker login ***"
+          echo "*** Docker login ***" &>> ${PATH_LOG}
           mkdir /root/.docker
           echo "$SECRET_AUTH" > /root/.docker/config.json
         fi
         if grep -Fq "index.docker.io" /root/.docker/config.json
         then
           # get the env file and the dockertest repo and the latest built of containerd if we don't want to build containerd
-          echo "*** * COS Bucket * ***"
+          echo "*** * COS Bucket * ***" &>> ${PATH_LOG}
           CONT_NAME=docker_s3_env
           docker run --env SECRET_S3 -d -v /workspace:/workspace --privileged --name $CONT_NAME debian:bullseye /bin/bash -c "${PATH_SCRIPTS}/get_env.sh"
           status_code="$(docker container wait $CONT_NAME)"
@@ -65,32 +73,36 @@ spec:
 
           if [[ ${status_code} -ne 0 ]]
           then
-          echo "The docker to get the env.list and the dockertest has failed."
-              exit 1
+            echo "The docker to get the env.list and the dockertest has failed." &>> ${PATH_LOG}
+            docker logs $CONT_NAME &>> ${PATH_LOG}
+            exit 1
           fi
-          ls
+
+          ls /workspace &>> ${PATH_LOG}
+          
           if [[ -f env.list ]]
           then
             # check there are 3 env variables in env.list
+            cat env.list &>> ${PATH_LOG}
             if grep -Fq "DOCKER_VERS" env.list && grep -Fq "CONTAINERD_VERS" env.list && grep -Fq "PACKAGING_REF" env.list
             then 
-              echo "DOCKER_VERS, CONTAINERD_VERS, PACKAGING_REF are in env.list"
+              echo "DOCKER_VERS, CONTAINERD_VERS, PACKAGING_REF are in env.list" &>> ${PATH_LOG}
             else 
-              echo "DOCKER_VERS, CONTAINERD_VERS and/or PACKAGING_REF are not in env.list"
+              echo "DOCKER_VERS, CONTAINERD_VERS and/or PACKAGING_REF are not in env.list" &>> ${PATH_LOG}
               exit 1
             fi
             set -o allexport
             source env.list
-            echo "DEBUG ENV.LIST"
+            echo "&&& DEBUG ENV.LIST"
             echo $DOCKER_VERS
             echo $CONTAINERD_VERS
             echo $PACKAGING_REF
           else
-            echo "There is no env.list"
+            echo "There is no env.list" &>> ${PATH_LOG}
           fi
           
           # generate the env-distrib.list
-          echo "*** ** env-distrib.list ** ***"
+          echo "*** ** env-distrib.list ** ***" &>> ${PATH_LOG}
           mkdir docker-ce-packaging
           pushd docker-ce-packaging
           git init
@@ -107,90 +119,69 @@ spec:
 
           rm -rf docker-ce-packaging
 
-          # CHANGE ENV-DISTRIB.LIST HERE
-          rm env-distrib.list
-          echo DEBS=\"debian-bullseye\" > env-distrib.list
-          echo RPMS=\"fedora-33\" >> env-distrib.list
-
           # check the env.list (versions of docker-ce, containerd and list of packages)
           if [[ -f env-distrib.list ]]
           # if there is env.list and env-distrib.list
           then
+            cat env-distrib.list &>> ${PATH_LOG}
             # check if there are two variables in env-distrib.list
             if grep -Fq "DEBS" env-distrib.list && grep -Fq "RPMS" env-distrib.list
             then 
-              echo "DEBS and RPMS are in env-distrib.list"
+              echo "DEBS and RPMS are in env-distrib.list" &>> ${PATH_LOG}
             else 
-              echo "DEBS and/or RPMS are not in env-distrib.list"
+              echo "DEBS and/or RPMS are not in env-distrib.list" &>> ${PATH_LOG}
               exit 1
             fi
             source env-distrib.list
-            echo "DEBUG ENV-DISTRIB.LIST"
+            echo "&&& DEBUG ENV-DISTRIB.LIST"
             echo $DEBS
             echo $RPMS
           else
-            echo "There is no env-distrib.list"
+            echo "There is no env-distrib.list" &>> ${PATH_LOG}
             exit 1
           fi
 
           # build docker_ce and containerd
-          echo "*** *** BUILD *** ***"
+          echo "*** *** BUILD *** ***" &>> ${PATH_LOG}
           CONT_NAME=docker-build
-          docker run --env SECRET_AUTH --env PATH_SCRIPTS --init -d -v /workspace:/workspace --privileged --name $CONT_NAME --entrypoint ${PATH_SCRIPTS}/build.sh ${PATH_IMAGE_BUILD}/docker_ce_build
-          docker logs --follow $CONT_NAME
+          docker run --env SECRET_AUTH --env PATH_SCRIPTS -d -v /workspace:/workspace --privileged --name $CONT_NAME --entrypoint ${PATH_SCRIPTS}/build.sh ${PATH_IMAGE_BUILD}/docker_ce_build
+          docker logs --follow $CONT_NAME &>> ${PATH_LOG}
           status_code="$(docker container wait $CONT_NAME)"
           if [[ ${status_code} -ne 0 ]]
           then
-            echo "The docker supposed to build the packages has failed."
+            echo "The docker supposed to build the packages has failed." &>> ${PATH_LOG}
             exit 1
           fi
 
           # change the containerd environment variable
           if [[ ${CONTAINERD_VERS} -eq 0 ]]
           then
-            ls -d /workspace/containerd-*
+            echo "Change CONTAINERD_VERS from 0 to the last version we got from the COS Bucket" &>> ${PATH_LOG}
+            ls -d /workspace/containerd-* &>> ${PATH_LOG}
             if [[ $? -ne 0 ]]
             then
-              echo "There is no containerd package."
+              echo "There is no containerd package." &>> ${PATH_LOG}
               exit 1
             fi
             CONTAINERD_VERS=$(eval "ls -d /workspace/containerd-* | cut -d'-' -f2")
-            echo ${CONTAINER_VERS}
+            echo ${CONTAINER_VERS} &>> ${PATH_LOG}
             sed -i 's/CONTAINERD_VERS=0/CONTAINERD_VERS='${CONTAINERD_VERS}'/g' env.list
-            cat env.list
-            ls /workspace
+            cat env.list &>> ${PATH_LOG}
+            ls /workspace &>> ${PATH_LOG}
           fi
 
           # test the packages
-          echo "*** *** * TEST * *** ***"
+          echo "*** *** * TEST * *** ***" &>> ${PATH_LOG}
           CONT_NAME=docker-test
           docker run --env SECRET_AUTH --env PATH_SCRIPTS --init -d -v /workspace:/workspace --privileged --name $CONT_NAME --entrypoint ${PATH_SCRIPTS}/test.sh ${PATH_IMAGE_BUILD}/docker_ce_build
           status_code="$(docker container wait $CONT_NAME)"
           if [[ ${status_code} -eq 0 ]]
           then
-            docker logs $CONT_NAME
+            docker logs $CONT_NAME &>> ${PATH_LOG}
+            echo "WWWWW TESTS CHECK WWWWW"
+            .${PATH_SCRIPTS}/check_tests.sh
           fi
-          ls /workspace
-          # check errors 
-          #DIR_TEST="/workspace/test_docker-ce-${DOCKER_VERS}_containerd-${CONTAINERD_VERS}"
-          ls DIR_TEST="/workspace/test_docker-ce-${DOCKER_VERS}_containerd-${CONTAINERD_VERS}"
-          # check that for each distrib of each packtype, we have a build log and a test log
-          # check if no error in the test log
-          #NB_DEBS=$(eval "awk -F\- '{print NF-1}' /workspace/env-distrib.list | awk 'NR==1'")
-          #NB_RPMS=$(eval "awk -F\- '{print NF-1}' /workspace/env-distrib.list | awk 'NR==2'")
-          #NB_DISTROS=$(expr ${NB_DEBS} + ${NB_RPMS})
-          #NB_BUILD_LOGS=$(eval "find build* | wc -l")
-          #NB_TEST_LOGS=$(eval "find test* | wc -l")
-          #echo ${NB_BUILD_LOGS}
-          #echo ${NB_TEST_LOGS}
-          #if [[ ${NB_BUILD_LOGS} == ${NB_DISTROS} ]] && [[ ${NB_TEST_LOGS} == $ {NB_DISTROS} ]]
-          #then
-            # check the test_logs
-            #DISTROS=$(eval "echo $DEBS $RPMS | tr '-' '_'")
-            #for DISTRO in ${DISTROS}
-          #else 
-            # error and push to cos bucket ERR
-          #fi
+          
 
           # push to the COS Bucket
 
