@@ -18,12 +18,12 @@ spec:
     - name: docker-graph-storage
       mountPath: /var/lib/docker
     env:
-      - name: SECRET_AUTH
+      - name: DOCKER_SECRET_AUTH
         valueFrom:
           secretKeyRef:
             name: docker-token
             key: .dockerconfigjson
-      - name: SECRET_S3
+      - name: S3_SECRET_AUTH
         valueFrom:
           secretKeyRef:
             name: secret-s3
