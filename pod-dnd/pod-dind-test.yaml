@@ -1,4 +1,4 @@
-# pod to test the dind image
+# pod to test the docker_ce_build image with docker and s3 secrets
 apiVersion: v1
 kind: Pod
 metadata:
