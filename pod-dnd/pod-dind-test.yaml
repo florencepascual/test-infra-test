@@ -1,0 +1,36 @@
+# pod to test the dind image
+apiVersion: v1
+kind: Pod
+metadata:
+  name: test-als-all-in-one-pod
+spec:
+  automountServiceAccountToken: false
+  containers:
+  - name: test
+    command:
+    - /usr/local/bin/dockerd-entrypoint.sh
+    image: quay.io/florencepascual/docker_ce_build
+    resources: {}
+    terminationMessagePolicy: FallbackToLogsOnError
+    securityContext:
+      privileged: true
+    volumeMounts:
+    - name: docker-graph-storage
+      mountPath: /var/lib/docker
+    env:
+      - name: SECRET_AUTH
+        valueFrom:
+          secretKeyRef:
+            name: docker-token
+            key: .dockerconfigjson
+      - name: SECRET_S3
+        valueFrom:
+          secretKeyRef:
+            name: secret-s3
+            key: password
+  restartPolicy: Never
+  terminationGracePeriodSeconds: 18
+  volumes:
+  - name: docker-graph-storage
+    emptyDir: {}
+status: {}  
