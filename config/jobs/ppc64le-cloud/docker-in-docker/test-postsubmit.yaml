@@ -1,6 +1,9 @@
 postsubmits:
   florencepascual/webhook-test:
-  - name: postsubmit     
+  - name: postsubmit    
+    labels:
+      preset-secrets: "true"
+    cluster: k8s-ppc64le-cluster
     decorate: true
     branches: 
       - master 
