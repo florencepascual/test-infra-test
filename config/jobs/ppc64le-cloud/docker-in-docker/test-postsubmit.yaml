@@ -1,0 +1,77 @@
+postsubmits:
+  florencepascual/webhook-test:
+  - name: postsubmit    
+    labels:
+      preset-secrets: "true"
+    cluster: k8s-ppc64le-cluster
+    decorate: true
+    branches: 
+      - master 
+    spec:
+      containers:
+      - image: quay.io/florencepascual/docker_ce_build
+        command:
+        - /bin/bash
+        args:
+        - -c
+        - |
+          echo "Executing prow job"
+          # path to the github repository
+          PATH_GITHUB="https://github.com/florencepascual/docker_ce_build_ppc64.git"
+          DIR_GITHUB="docker_ce_build_ppc64"
+          # path to the image for building and testing
+          PATH_IMAGE_BUILD="quay.io/florencepascual"
+          # path to the scripts 
+          PATH_SCRIPTS="hack/docker-in-docker"
+          # path to test.sh, script to test docker-ce and containerd.
+          PATH_IMAGES="images/docker-in-docker"
+
+          git clone ${PATH_GITHUB}
+          wget -O ${DIR_GITHUB}/${PATH_SCRIPTS}/dockerd-entrypoint.sh https://raw.githubusercontent.com/docker-library/docker/master/dockerd-entrypoint.sh
+          chmod a+x ${DIR_GITHUB}/${PATH_SCRIPTS}/*.sh
+          ls ${DIR_GITHUB}/${PATH_SCRIPTS}
+
+          bash /usr/local/bin/dockerd-entrypoint.sh &
+          source ./${DIR_GITHUB}/${PATH_SCRIPTS}/dockerd-starting.sh
+
+          if [ ! -z "$pid" ]
+          then
+            if ! test -d /root/.docker 
+            then
+              mkdir /root/.docker
+              echo "$SECRET_AUTH" > /root/.docker/config.json
+            fi
+            if grep -Fq "index.docker.io" /root/.docker/config.json
+            then
+              echo "Docker login"
+              docker run hello-world
+              docker run --name test alpine
+              docker ps -a
+              if [ "$(docker ps -a | grep test)" ]
+              then
+                ps -e | grep $DAEMON
+                kill -9 $pid
+              fi
+            fi
+          fi
+        resources: {}
+        securityContext:
+          privileged: true
+        volumeMounts:
+        - name: docker-root
+          mountPath: /var/lib/docker
+        env:
+          - name: SECRET_AUTH
+            valueFrom:
+              secretKeyRef:
+                name: docker-token
+                key: .dockerconfigjson
+          - name: SECRET_S3
+            valueFrom:
+              secretKeyRef:
+                name: secret-s3
+                key: password
+      restartPolicy: Never
+      volumes:
+      - name: docker-root
+        emptyDir: {}
