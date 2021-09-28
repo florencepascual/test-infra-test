@@ -1,13 +1,15 @@
 periodics:
   - name: docker-all-in-one-test
-    labels:
-      preset-secrets: "true"
     cluster: k8s-ppc64le-cluster
     decorate: true
     interval: 2h
+    extra_refs:
+      - base_ref: master
+        org: florencepascual
+        repo: docker-ce-build
     spec:
       containers:
-      - image: quay.io/alunsin/all_in_one_dind
+      - image: quay.io/powercloud/docker-ce-build
         command:
         - /bin/bash
         args:
@@ -46,11 +48,9 @@ periodics:
               docker run hello-world
               docker run --name test alpine
               docker ps -a
-              if [ "$(docker ps -a | grep test)" ]
-              then
-                ps -e | grep $DAEMON
-                kill -9 $pid
-              fi
+              ls /workspace
+              cd docker-ce-build
+              ls
             fi
           fi
         resources: {}
