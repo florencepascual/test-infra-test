@@ -5,63 +5,63 @@ periodics:
     interval: 2h
     spec:
       containers:
-      - image: quay.io/florencepascual/docker_ce_build:latest
-        command:
-        - /bin/bash
-        args:
-        - -c
-        - |
-          bash /usr/local/bin/dockerd-entrypoint.sh &
-          echo "Waiting for dockerd to start"
-          TIMEOUT=10
-          DAEMON="dockerd"
-          i=0
-          while [ $i -lt $TIMEOUT ] && ! /usr/bin/pgrep $DAEMON
-          do
-            i=$((i+1))
-            sleep 2
-          done
-          pid=`/usr/bin/pgrep $DAEMON`
-          if [ -z "$pid" ]
-          then
-            echo "$DAEMON did not started after $(($TIMEOUT*2)) seconds"
-            exit 1
-          else
-            echo "Found $DAEMON pid:$pid"
-            ps -aef | grep docker | grep -v grep
-            sleep 10
-            ps -aef
-            echo "Launching docker info"
-            docker info
-            if ! test -d /root/.docker 
+        - image: quay.io/florencepascual/docker_ce_build:latest-ppc64le
+          command:
+          - /bin/bash
+          args:
+          - -c
+          - |
+            bash /usr/local/bin/dockerd-entrypoint.sh &
+            echo "Waiting for dockerd to start"
+            TIMEOUT=10
+            DAEMON="dockerd"
+            i=0
+            while [ $i -lt $TIMEOUT ] && ! /usr/bin/pgrep $DAEMON
+            do
+              i=$((i+1))
+              sleep 2
+            done
+            pid=`/usr/bin/pgrep $DAEMON`
+            if [ -z "$pid" ]
             then
-              mkdir /root/.docker
-              echo "$SECRET_AUTH" > /root/.docker/config.json
+              echo "$DAEMON did not started after $(($TIMEOUT*2)) seconds"
+              exit 1
+            else
+              echo "Found $DAEMON pid:$pid"
+              ps -aef | grep docker | grep -v grep
+              sleep 10
+              ps -aef
+              echo "Launching docker info"
+              docker info
+              if ! test -d /root/.docker 
+              then
+                mkdir /root/.docker
+                echo "$SECRET_AUTH" > /root/.docker/config.json
+              fi
+              if grep -Fq "index.docker.io" /root/.docker/config.json
+              then
+                echo "Docker login"
+                docker run hello-world
+                docker run --name test alpine
+                docker ps -a
+                ls /workspace
+                cd docker-ce-build
+                ls
+              fi
             fi
-            if grep -Fq "index.docker.io" /root/.docker/config.json
-            then
-              echo "Docker login"
-              docker run hello-world
-              docker run --name test alpine
-              docker ps -a
-              ls /workspace
-              cd docker-ce-build
-              ls
-            fi
-          fi
-        resources: {}
-        securityContext:
-          privileged: true
-        volumeMounts:
+          resources: {}
+          securityContext:
+            privileged: true
+          volumeMounts:
+          - name: docker-root
+            mountPath: /var/lib/docker
+          env:
+            - name: SECRET_AUTH
+              valueFrom:
+                secretKeyRef:
+                  name: docker-token
+                  key: .dockerconfigjson
+        restartPolicy: Never
+        volumes:
         - name: docker-root
-          mountPath: /var/lib/docker
-        env:
-          - name: SECRET_AUTH
-            valueFrom:
-              secretKeyRef:
-                name: docker-token
-                key: .dockerconfigjson
-      restartPolicy: Never
-      volumes:
-      - name: docker-root
-        emptyDir: {}
+          emptyDir: {}
