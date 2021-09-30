@@ -1,0 +1,41 @@
+periodics:
+  - name: periodics-test
+    cluster: k8s-ppc64le-cluster
+    decorate: true
+    interval: 2h
+    extra_refs:
+      - base_ref: master
+        org: florencepascual
+        repo: docker-ce-build
+        workdir: false
+    spec:
+  containers:
+      - image: quay.io/powercloud/docker-ce-build
+        command:
+        - /bin/bash
+        args:
+        - -c
+        - |
+          pwd
+          ls
+        resources: {}
+        securityContext:
+          privileged: true
+        volumeMounts:
+        - name: docker-root
+          mountPath: /var/lib/docker
+        env:
+          - name: DOCKER_SECRET_AUTH
+            valueFrom:
+              secretKeyRef:
+                name: docker-token
+                key: .dockerconfigjson
+          - name: S3_SECRET_AUTH
+            valueFrom:
+              secretKeyRef:
+                name: secret-s3
+                key: password
+      restartPolicy: Never
+      volumes:
+      - name: docker-root
+        emptyDir: {}
