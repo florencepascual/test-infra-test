@@ -9,7 +9,7 @@ periodics:
         repo: docker-ce-build
         workdir: false
     spec:
-  containers:
+      containers:
       - image: quay.io/powercloud/docker-ce-build
         command:
         - /bin/bash
