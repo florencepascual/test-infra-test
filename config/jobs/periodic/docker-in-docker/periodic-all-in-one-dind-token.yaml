@@ -3,10 +3,6 @@ periodics:
     cluster: k8s-ppc64le-cluster
     decorate: true
     interval: 2h
-    extra_refs:
-      - base_ref: master
-        org: florencepascual
-        repo: docker-ce-build
     spec:
       containers:
       - image: quay.io/powercloud/docker-ce-build
