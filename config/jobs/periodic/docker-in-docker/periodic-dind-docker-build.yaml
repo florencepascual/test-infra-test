@@ -1,5 +1,5 @@
 periodics:
-  - name: dind-docker-build
+  - name: docker-all-in-one-test
     labels:
       preset-secrets: "true"
     cluster: k8s-ppc64le-cluster
