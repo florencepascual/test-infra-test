@@ -5,12 +5,13 @@ periodics:
     interval: 24h
     spec:
       containers:
-      - image: quay.io/florencepascual/docker_ce_build:latest-ppc64le
+      - image: quay.io/powercloud/docker_ce_build
         command:
         - /bin/bash
         args:
         - -c
         - |
+          uname -a
           bash /usr/local/bin/dockerd-entrypoint.sh &
           echo "Waiting for dockerd to start"
           TIMEOUT=10
