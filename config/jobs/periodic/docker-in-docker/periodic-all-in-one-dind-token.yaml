@@ -5,7 +5,7 @@ periodics:
     interval: 24h
     spec:
       containers:
-      - image: quay.io/powercloud/docker-ce-build
+      - image: quay.io/powercloud/docker-ce-build:latest-ppc64le
         command:
         - /bin/bash
         args:
