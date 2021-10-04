@@ -10,6 +10,7 @@ periodics:
     spec:
       containers:
       - image: quay.io/powercloud/docker-ce-build
+        workingDir: /workspace
         command:
         - /bin/bash
         args:
