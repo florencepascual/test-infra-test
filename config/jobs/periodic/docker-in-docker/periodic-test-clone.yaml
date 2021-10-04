@@ -6,7 +6,7 @@ periodics:
       - org: ppc64le-cloud
         repo: docker-ce-build
         base_ref: main
-        workdir: true
+        workdir: false
     interval: 24h
     spec:
       containers:
@@ -50,6 +50,7 @@ periodics:
               docker run hello-world
               docker run --name test alpine
               docker ps -a
+              pwd
               ls /workspace
               cd docker-ce-build
               ls
