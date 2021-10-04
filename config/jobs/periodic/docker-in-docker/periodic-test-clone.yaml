@@ -50,11 +50,10 @@ periodics:
               docker run hello-world
               docker run --name test alpine
               docker ps -a
+              echo "## pwd : "
               pwd
+              mkdir -p /workspace/A
               ls /workspace
-              cd /workspace
-              pwd
-              mkdir A
               ls /home/prow/go/src/github.com/ppc64le-cloud/docker-ce-build
               ls
             fi
