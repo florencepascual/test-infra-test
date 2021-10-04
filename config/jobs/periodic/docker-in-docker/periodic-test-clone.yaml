@@ -6,7 +6,7 @@ periodics:
       - org: ppc64le-cloud
         repo: docker-ce-build
         base_ref: main
-        workdir: false
+        workdir: true
     interval: 24h
     spec:
       containers:
