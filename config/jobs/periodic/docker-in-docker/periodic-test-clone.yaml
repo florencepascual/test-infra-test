@@ -6,7 +6,7 @@ periodics:
       - org: ppc64le-cloud
         repo: docker-ce-build
         base_ref: main
-        workdir: true
+        workdir: false
     interval: 24h
     spec:
       containers:
@@ -52,7 +52,10 @@ periodics:
               docker ps -a
               pwd
               ls /workspace
-              cd docker-ce-build
+              cd /workspace
+              pwd
+              mkdir A
+              ls /home/prow/go/src/github.com/ppc64le-cloud/docker-ce-build
               ls
             fi
           fi
