@@ -17,7 +17,6 @@ periodics:
         args:
         - -c
         - |
-          uname -a
           bash /usr/local/bin/dockerd-entrypoint.sh &
           echo "Waiting for dockerd to start"
           TIMEOUT=10
