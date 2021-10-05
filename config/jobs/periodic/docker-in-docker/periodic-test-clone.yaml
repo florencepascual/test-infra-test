@@ -2,6 +2,10 @@ periodics:
   - name: docker-all-in-one-test
     cluster: k8s-ppc64le-cluster
     decorate: true
+    decoration_config:
+      ssh_key_secrets:
+      - ssh-secret-github
+    clone_uri: "git@github.com:florencepascual/docker-ce-build.git"
     extra_refs:
     - org: docker
       repo: docker-ce-packaging
