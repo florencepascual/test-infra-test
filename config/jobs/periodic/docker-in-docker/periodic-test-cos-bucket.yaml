@@ -6,7 +6,7 @@ periodics:
       gcs_configuration:
         bucket: s3://ppc64le-docker
         path_strategy: explicit
-      gcs_credentials_secret: s3-auth
+      s3_credentials_secret: s3-auth
     extra_refs:
       - org: ppc64le-cloud
         repo: docker-ce-build
