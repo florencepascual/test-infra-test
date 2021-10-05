@@ -55,7 +55,7 @@ periodics:
               pwd
               mkdir -p /workspace/A
               ls /workspace
-              ls /home/prow/go/src/github.com/ppc64le-cloud/docker-ce-build
+              ls /home/prow/go/src/github.com/
               ls
             fi
           fi
