@@ -126,6 +126,7 @@ mkdir -p /home/fpascual/.kube/config
 sudo cp -i /etc/kubernetes/admin.conf /home/fpascual/.kube/config
 sudo chown $(id -u):$(id -g) /home/fpascual/.kube/config
 sudo chown $(id -u):$(id -g) /home/fpascual/.kube/config/admin.conf
+export KUBECONFIG=/home/fpascual/.kube/config/admin.conf
 
 # check the cluster is running
 kubectl cluster-info
