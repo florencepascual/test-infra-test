@@ -7,7 +7,7 @@ periodics:
         repo: docker-ce-packaging
         base_ref: main
         workdir: false
-        clone_depth: 1
+      clone_depth: 1
     interval: 24h
     spec:
       containers:
