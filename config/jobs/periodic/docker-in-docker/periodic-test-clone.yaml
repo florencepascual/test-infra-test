@@ -3,11 +3,11 @@ periodics:
     cluster: k8s-ppc64le-cluster
     decorate: true
     extra_refs:
-      - org: docker
-        repo: docker-ce-packaging
-        base_ref: main
-        workdir: false
-      clone_depth: 1
+    - org: docker
+      repo: docker-ce-packaging
+      base_ref: master
+      workdir: false
+    clone_depth: 1
     interval: 24h
     spec:
       containers:
