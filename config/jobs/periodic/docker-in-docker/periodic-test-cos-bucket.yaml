@@ -61,6 +61,11 @@ periodics:
               ls /workspace
               ls /home/prow/go/src/github.com/ppc64le-cloud/docker-ce-build
               ls
+              if [ "$(docker ps -a | grep test)" ]
+              then
+                ps -e | grep $DAEMON
+                kill -9 $pid
+              fi
             fi
           fi
         resources: {}
