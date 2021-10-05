@@ -1,0 +1,85 @@
+periodics:
+  - name: docker-all-in-one-test
+    cluster: k8s-ppc64le-cluster
+    decorate: true
+    extra_refs:
+    - org: ppc64le-cloud
+      repo: docker-ce-build
+      base_ref: master
+      workdir: false
+    - org: docker
+      repo: docker-ce-packaging
+      base_ref: master
+      workdir: false
+    interval: 24h
+    spec:
+      containers:
+      - image: quay.io/powercloud/docker-ce-build
+        workingDir: /workspace
+        command:
+        - /bin/bash
+        args:
+        - -c
+        - |
+          bash /usr/local/bin/dockerd-entrypoint.sh &
+          echo "Waiting for dockerd to start"
+          TIMEOUT=10
+          DAEMON="dockerd"
+          i=0
+          while [ $i -lt $TIMEOUT ] && ! /usr/bin/pgrep $DAEMON
+          do
+            i=$((i+1))
+            sleep 2
+          done
+          pid=`/usr/bin/pgrep $DAEMON`
+          if [ -z "$pid" ]
+          then
+            echo "$DAEMON did not started after $(($TIMEOUT*2)) seconds"
+            exit 1
+          else
+            echo "Found $DAEMON pid:$pid"
+            ps -aef | grep docker | grep -v grep
+            sleep 10
+            ps -aef
+            echo "Launching docker info"
+            docker info
+            if ! test -d /root/.docker 
+            then
+              mkdir /root/.docker
+              echo "$DOCKER_SECRET_AUTH" > /root/.docker/config.json
+            fi
+            if grep -Fq "index.docker.io" /root/.docker/config.json
+            then
+              echo "Docker login"
+              docker run hello-world
+              docker run --name test alpine
+              docker ps -a
+              echo "## pwd : "
+              pwd
+              mkdir -p /workspace/A
+              ls /workspace
+              ls /home/prow/go/src/github.com/
+              ls
+            fi
+          fi
+        resources: {}
+        securityContext:
+          privileged: true
+        volumeMounts:
+        - name: docker-root
+          mountPath: /var/lib/docker
+        env:
+          - name: DOCKER_SECRET_AUTH
+            valueFrom:
+              secretKeyRef:
+                name: docker-token
+                key: .dockerconfigjson
+          - name: S3_SECRET_AUTH
+            valueFrom:
+              secretKeyRef:
+                name: secret-s3
+                key: password
+      restartPolicy: Never
+      volumes:
+      - name: docker-root
+        emptyDir: {}
