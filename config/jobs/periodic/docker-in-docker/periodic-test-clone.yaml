@@ -6,12 +6,6 @@ periodics:
       ssh_key_secrets:
       - ssh-secret-github
     clone_uri: "git@github.com:florencepascual/docker-ce-build.git"
-    extra_refs:
-    - org: docker
-      repo: docker-ce-packaging
-      base_ref: master
-      workdir: false
-    clone_depth: 1
     interval: 24h
     spec:
       containers:
