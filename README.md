@@ -140,7 +140,7 @@ kubectl get nodes -o wide
 kubectl taint nodes --all node-role.kubernetes.io/master-
 
 # on worker node
-# run the command that was the output by kubeadm init 
+# run the command that was the output by kubeadm init as sudo
 kubeadm join --token <token> <control-plane-host>:<control-plane-port> --discovery-token-ca-cert-hash sha256:<hash>
 
 # if you do not have the token 
