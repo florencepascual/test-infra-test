@@ -140,7 +140,7 @@ kubectl get nodes -o wide
 # enable scheduling (https://github.com/calebhailey/homelab/issues/3)
 kubectl taint nodes --all node-role.kubernetes.io/master-
 
-# on worker node
+# on worker node, not necessary
 # run the command that was the output by kubeadm init as sudo
 kubeadm join --token <token> <control-plane-host>:<control-plane-port> --discovery-token-ca-cert-hash sha256:<hash>
 
@@ -159,7 +159,7 @@ kubectl cluster-info
 
 # get the secrets
 # docker-token
-docker login -u florencepascual -p dddc5ad3-40c2-46ee-ae79-11855453cd1a
+docker login -u florencepascual --password-stdin
 kubectl create secret generic docker-token --from-file=.dockerconfigjson=/home/fpascual/.docker/config.json --type=kubernetes.io/dockerconfigjson
 # secret-s3
 nano secret-s3.yaml

@@ -5,7 +5,7 @@ periodics:
     extra_refs:
     - org: ppc64le-cloud
       repo: docker-ce-build
-      base_ref: master
+      base_ref: main
       workdir: false
     interval: 24h
     spec:
