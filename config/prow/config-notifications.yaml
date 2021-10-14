@@ -1,0 +1,116 @@
+prowjob_namespace: prow
+pod_namespace: test-pods
+log_level: debug
+
+slack_reporter_configs:
+  '*':
+    job_types_to_report:
+      - postsubmit
+      - periodic
+      - batch
+    job_states_to_report:
+      - failure
+      - error
+    channel: prow-job-notifications
+    report_template: 'Job {{.Spec.Job}} of type {{.Spec.Type}} ended with state {{.Status.State}}. <!subteam^S01E9J0G3EU> <{{.Status.URL}}|View logs>'
+  docker-all-in-one-test:
+    job_types_to_report:
+      - postsubmit
+      - periodic
+    job_states_to_report:
+      - failure
+      - error
+      - success
+    channel: prow-job-notifications
+    report_template: 'Job {{.Spec.Job}} of type {{.Spec.Type}} ended with state {{.Status.State}}. <!subteam^S01E9J0G3EU> <{{.Status.URL}}|View logs>'
+
+in_repo_config:
+  enabled:
+    "*": true
+
+deck:
+  spyglass:
+    lenses:
+      - lens:
+          name: metadata
+        required_files:
+          - started.json|finished.json
+      - lens:
+          config:
+          name: buildlog
+        required_files:
+          - build-log.txt
+      - lens:
+          name: junit
+        required_files:
+          - .*/junit.*\.xml
+      - lens:
+          name: coverage
+        required_files:
+          - artifacts/filtered.cov
+        optional_files:
+          - artifacts/filtered.html
+      - lens:
+          name: podinfo
+        required_files:
+          - podinfo.json
+      - lens:
+          name: links
+        required_files:
+          - artifacts/.*\.link\.txt
+  tide_update_period: 1s
+
+plank:
+  job_url_prefix_config:
+    "*": https://prow.ppc64le-cloud.org/view/
+  pod_pending_timeout: 15m
+  pod_unscheduled_timeout: 1m
+  report_templates:
+    '*': >-
+      [Full PR test history](https://prow.ppc64le-cloud.org/pr-history?org={{.Spec.Refs.Org}}&repo={{.Spec.Refs.Repo}}&pr={{with index .Spec.Refs.Pulls 0}}{{.Number}}{{end}}).
+      [Your PR dashboard](https://prow.ppc64le-cloud.org/pr?query=is:pr+state:open+author:{{with
+      index .Spec.Refs.Pulls 0}}{{.Author}}{{end}}).
+  default_decoration_configs:
+    "*":
+      timeout: 2h
+      grace_period: 15s
+      gcs_configuration:
+        bucket: s3://prow-logs
+        path_strategy: explicit
+      s3_credentials_secret: s3-credentials
+      utility_images:
+        clonerefs: quay.io/powercloud/clonerefs:v20210623-0c619adcf3
+        entrypoint: quay.io/powercloud/entrypoint:v20210623-0c619adcf3
+        initupload: quay.io/powercloud/initupload:v20210623-0c619adcf3
+        sidecar: quay.io/powercloud/sidecar:v20210623-0c619adcf3
+      ssh_key_secrets:
+        - bot-ssh-secret
+
+tide:
+  sync_period: 2m
+  queries:
+    - repos:
+        - IBM/raksh
+      labels:
+        - lgtm
+        - approved
+      missingLabels:
+        - do-not-merge
+        - do-not-merge/blocked-paths
+        - do-not-merge/hold
+        - do-not-merge/invalid-owners-file
+        - do-not-merge/work-in-progress
+        - needs-rebase
+    - orgs:
+        - ppc64le-cloud
+        - ocp-power-automation
+      labels:
+        - lgtm
+        - approved
+      missingLabels:
+        - needs-rebase
+        - do-not-merge/hold
+        - do-not-merge/work-in-progress
+        - do-not-merge/invalid-owners-file
+
+decorate_all_jobs: true
