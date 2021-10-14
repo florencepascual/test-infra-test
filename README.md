@@ -177,3 +177,18 @@ data:
 kubectl apply -f secret-s3.yaml
 
 ```
+
+apiVersion: v1
+kind: Secret
+metadata:
+  name: s3-auth
+stringData:
+  service-account.json: |
+    {
+      "region": "us-south",
+      "access_key": "",
+      "endpoint": "s3.us-south.cloud-object-storage.appdomain.cloud",
+      "insecure": false,
+      "s3_force_path_style": true,
+      "secret_key": ""
+    }
