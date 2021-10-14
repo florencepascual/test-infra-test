@@ -192,3 +192,8 @@ stringData:
       "s3_force_path_style": true,
       "secret_key": ""
     }
+
+echo $S3_ACCESS_KEY:$S3_SECRET > .passwd-s3fs
+chmod 600 .passwd-s3fs
+mkdir -p /mnt/s3_ppc64le-docker
+s3fs ppc64le-docker /mnt/s3_ppc64le-docker -o url="https://s3.us-south.cloud-object-storage.appdomain.cloud" -o passwd_file=.passwd-s3fs
