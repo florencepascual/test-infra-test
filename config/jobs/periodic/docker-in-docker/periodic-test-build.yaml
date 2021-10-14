@@ -1,23 +1,25 @@
 periodics:
-  - name: docker-build
+  - name: docker-all-in-one-test
     cluster: k8s-ppc64le-cluster
     decorate: true
     extra_refs:
-    - org: ppc64le-cloud
-      repo: docker-ce-build
-      base_ref: master
-      workdir: false
+      - org: ppc64le-cloud
+        repo: docker-ce-build
+        base_ref: main
+        workdir: false
     interval: 24h
     spec:
       containers:
       - image: quay.io/powercloud/docker-ce-build
+        workingDir: /workspace
         command:
         - /bin/bash
         args:
         - -c
         - |
-          pwd
+          bash /usr/local/bin/dockerd-entrypoint.sh &
           ls -alitr
+          pwd
         resources: {}
         securityContext:
           privileged: true
