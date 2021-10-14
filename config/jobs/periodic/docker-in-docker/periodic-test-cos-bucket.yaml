@@ -23,7 +23,48 @@ periodics:
         - -c
         - |
           bash /usr/local/bin/dockerd-entrypoint.sh &
-          echo $ARTIFACTS
+          echo "LOG - docker builds" 2>&1 | tee $ARTIFACTS/log.log
+          cat $ARTIFACTS/log.log
+
+          echo "Waiting for dockerd to start" 2>&1 | tee -a $ARTIFACTS/log.log
+          TIMEOUT=10
+          DAEMON="dockerd"
+          i=0
+          while [ $i -lt $TIMEOUT ] && ! /usr/bin/pgrep $DAEMON
+          do
+            echo "Number: $i"
+            i=$((i+1))
+            sleep 2
+          done
+          pid=`/usr/bin/pgrep $DAEMON`
+          if [ -z "$pid" ]
+          then
+            echo "$DAEMON did not started after $(($TIMEOUT*2)) seconds" 2>&1 | tee -a $ARTIFACTS/log.log
+            exit 1
+          else
+            echo "Found $DAEMON pid:$pid" 2>&1 | tee -a $ARTIFACTS/log.log
+            ps -aef | grep docker | grep -v grep
+            sleep 10
+            ps -aef
+            echo "Launching docker info" 2>&1 | tee -a $ARTIFACTS/log.log
+            docker info 2>&1 | tee -a $ARTIFACTS/log.log
+            if ! test -d /root/.docker 
+            then
+              mkdir /root/.docker
+              echo "$DOCKER_SECRET_AUTH" > /root/.docker/config.json
+            fi
+            if grep -Fq "index.docker.io" /root/.docker/config.json
+            then
+              docker run hello-world
+              docker run alpine
+              docker ps -a
+              if [ "$(docker ps -a | grep test)" ]
+              then
+                ps -e | grep $DAEMON
+                kill -9 $pid
+              fi
+            fi
+          fi
         resources: {}
         securityContext:
           privileged: true
