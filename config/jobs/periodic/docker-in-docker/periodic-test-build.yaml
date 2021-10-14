@@ -1,0 +1,41 @@
+periodics:
+  - name: docker-build
+    cluster: k8s-ppc64le-cluster
+    decorate: true
+    extra_refs:
+    - org: ppc64le-cloud
+      repo: docker-ce-build
+      base_ref: master
+      workdir: false
+    interval: 24h
+    spec:
+      containers:
+      - image: quay.io/powercloud/docker-ce-build
+        command:
+        - /bin/bash
+        args:
+        - -c
+        - |
+          pwd
+          ls -alitr
+        resources: {}
+        securityContext:
+          privileged: true
+        volumeMounts:
+        - name: docker-root
+          mountPath: /var/lib/docker
+        env:
+          - name: DOCKER_SECRET_AUTH
+            valueFrom:
+              secretKeyRef:
+                name: docker-token
+                key: .dockerconfigjson
+          - name: S3_SECRET_AUTH
+            valueFrom:
+              secretKeyRef:
+                name: secret-s3
+                key: password
+      restartPolicy: Never
+      volumes:
+      - name: docker-root
+        emptyDir: {}
