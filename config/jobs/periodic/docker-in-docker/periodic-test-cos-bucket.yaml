@@ -55,7 +55,7 @@ periodics:
             fi
             if grep -Fq "index.docker.io" /root/.docker/config.json
             then
-              docker run hello-world
+              docker run --name test hello-world
               docker run alpine
               docker ps -a
               if [ "$(docker ps -a | grep test)" ]
