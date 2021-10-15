@@ -45,6 +45,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     zip \
     zlib1g-dev \
     iptables libdevmapper1.02.1 \
+    s3fs \
     && rm -rf /var/lib/apt/lists/*
 
 RUN mkdir -p /workspace/tmp
