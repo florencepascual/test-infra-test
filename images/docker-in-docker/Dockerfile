@@ -39,13 +39,13 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     pkg-config \
     procps \
     rsync \
+    s3fs \
     unzip \
     wget \
     xz-utils \
     zip \
     zlib1g-dev \
     iptables libdevmapper1.02.1 \
-    s3fs \
     && rm -rf /var/lib/apt/lists/*
 
 RUN mkdir -p /workspace/tmp
@@ -56,13 +56,13 @@ RUN set -eux; \
     case "${dpkgArch##*-}" in \
         'amd64') \
             wget https://download.docker.com/linux/debian/dists/bullseye/pool/stable/amd64/containerd.io_${CONTAINERD_VERSION}_amd64.deb -P /workspace/tmp; \
-            wget https://download.docker.com/linux/debian/dists/bullseye/pool/stable/amd64/docker-ce-cli_${DOCKER_VERSION}~debian-bullseye_amd64.deb -P /workspace/tmp; \
-            wget https://download.docker.com/linux/debian/dists/bullseye/pool/stable/amd64/docker-ce_${DOCKER_VERSION}~debian-bullseye_amd64.deb -P /workspace/tmp; \
+            wget https://download.docker.com/linux/debian/dists/bullseye/pool/stable/amd64/docker-ce-cli_$DOCKER_VERSION~debian-bullseye_amd64.deb -P /workspace/tmp; \
+            wget https://download.docker.com/linux/debian/dists/bullseye/pool/stable/amd64/docker-ce_$DOCKER_VERSION~debian-bullseye_amd64.deb -P /workspace/tmp; \
             ;; \
         'ppc64el') \
             wget https://download.docker.com/linux/debian/dists/bullseye/pool/stable/ppc64el/containerd.io_${CONTAINERD_VERSION}_ppc64el.deb -P /workspace/tmp; \
-            wget https://download.docker.com/linux/debian/dists/bullseye/pool/stable/ppc64el/docker-ce-cli_${DOCKER_VERSION}~debian-bullseye_ppc64el.deb -P /workspace/tmp; \
-            wget https://download.docker.com/linux/debian/dists/bullseye/pool/stable/ppc64el/docker-ce_${DOCKER_VERSION}~debian-bullseye_ppc64el.deb -P /workspace/tmp; \
+            wget https://download.docker.com/linux/debian/dists/bullseye/pool/stable/ppc64el/docker-ce-cli_$DOCKER_VERSION~debian-bullseye_ppc64el.deb -P /workspace/tmp; \
+            wget https://download.docker.com/linux/debian/dists/bullseye/pool/stable/ppc64el/docker-ce_$DOCKER_VERSION~debian-bullseye_ppc64el.deb -P /workspace/tmp; \
             ;; \
     esac; \
     \
@@ -76,22 +76,22 @@ RUN set -eux; \
 # set up subuid/subgid so that "--userns-remap=default" works out-of-the-box
 ##
 RUN set -eux; \
-	addgroup --system dockremap; \
-	adduser --system --ingroup dockremap dockremap; \
-	echo 'dockremap:165536:65536' >> /etc/subuid; \
-	echo 'dockremap:165536:65536' >> /etc/subgid
+        addgroup --system dockremap; \
+        adduser --system --ingroup dockremap dockremap; \
+        echo 'dockremap:165536:65536' >> /etc/subuid; \
+        echo 'dockremap:165536:65536' >> /etc/subgid
 
 # https://github.com/docker/docker/tree/master/hack/dind
-#ENV DIND_COMMIT 42b1175eda071c0e9121e1d64345928384a93df1
+# ENV DIND_COMMIT ed89041433a031cafc0a0f19cfe573c31688d377
 
 RUN set -eux; \
-	wget -O /usr/local/bin/dind "https://raw.githubusercontent.com/docker/docker/master/hack/dind"; \
-	chmod +x /usr/local/bin/dind;
+        wget -O /usr/local/bin/dind "https://raw.githubusercontent.com/docker/docker/master/hack/dind"; \
+        chmod +x /usr/local/bin/dind;
 
+#COPY dockerd-entrypoint.sh /usr/local/bin/
 RUN set -eux; \
-    wget https://raw.githubusercontent.com/docker-library/docker/master/20.10/dind/dockerd-entrypoint.sh;\
-    chmod +x dockerd-entrypoint.sh;\
-    mv dockerd-entrypoint.sh /usr/local/bin
+    wget -O /usr/local/bin/dockerd-entrypoint.sh "https://raw.githubusercontent.com/docker-library/docker/master/20.10/dind/dockerd-entrypoint.sh"; \
+    chmod +x /usr/local/bin/dockerd-entrypoint.sh;
 
 VOLUME /var/lib/docker
 EXPOSE 2375 2376
