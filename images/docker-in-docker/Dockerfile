@@ -82,7 +82,7 @@ RUN set -eux; \
 
 #COPY dockerd-entrypoint.sh /usr/local/bin/
 RUN set -eux; \
-    wget -O /usr/local/bin/dockerd-entrypoint.sh "https://raw.githubusercontent.com/docker-library/docker/master/20.10/dind/dockerd-entrypoint.sh"; \
+    wget -O /usr/local/bin/dockerd-entrypoint.sh "https://raw.githubusercontent.com/docker-library/docker/094faa88f437cafef7aeb0cc36e75b59046cc4b9/20.10/dind/dockerd-entrypoint.sh"; \
     chmod +x /usr/local/bin/dockerd-entrypoint.sh;
 
 VOLUME /var/lib/docker
