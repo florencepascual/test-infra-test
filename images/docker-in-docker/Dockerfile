@@ -77,13 +77,14 @@ RUN set -eux; \
 ENV DIND_COMMIT ed89041433a031cafc0a0f19cfe573c31688d377
 
 RUN set -eux; \
-        wget -O /usr/local/bin/dind "https://raw.githubusercontent.com/docker/docker/${DIND_COMMIT}/hack/dind"; \
-        chmod +x /usr/local/bin/dind;
+	wget -O /usr/local/bin/dind "https://raw.githubusercontent.com/docker/docker/${DIND_COMMIT}/hack/dind"; \
+	chmod +x /usr/local/bin/dind;
 
 #COPY dockerd-entrypoint.sh /usr/local/bin/
 RUN set -eux; \
-    wget -O /usr/local/bin/dockerd-entrypoint.sh "https://raw.githubusercontent.com/docker-library/docker/094faa88f437cafef7aeb0cc36e75b59046cc4b9/20.10/dind/dockerd-entrypoint.sh"; \
-    chmod +x /usr/local/bin/dockerd-entrypoint.sh;
+    wget https://raw.githubusercontent.com/docker-library/docker/094faa88f437cafef7aeb0cc36e75b59046cc4b9/20.10/dind/dockerd-entrypoint.sh;\
+    chmod +x dockerd-entrypoint.sh;\
+    mv dockerd-entrypoint.sh /usr/local/bin
 
 VOLUME /var/lib/docker
 EXPOSE 2375 2376
