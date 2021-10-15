@@ -3,14 +3,6 @@
 # This is inspired from  https://github.com/alunsin/all_in_one_dind/blob/90d0d0df6de2ea4d0666f3e10adce28a5fffcc88/Dockerfile
 ##
 
-##
-# Instruction: Manually copy or wget the deb file in the Dockerfile folder or wget in the Dockerfile
-# wget https://download.docker.com/linux/debian/dists/bullseye/pool/stable/ppc64el/containerd.io_$CONTAINERD_VERSION_ppc64el.deb
-#
-#  docker build -t docker_ce_build .
-#
-###
-
 FROM debian:bullseye
 
 ARG CONTAINERD_VERSION=1.4.6-1
