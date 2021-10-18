@@ -6,7 +6,7 @@ periodics:
       gcs_configuration:
         bucket: s3://ppc64le-docker
         path_strategy: explicit
-      s3_credentials_secret: s3-auth
+      gcs_credentials_secret: s3-auth
     extra_refs:
       - org: ppc64le-cloud
         repo: docker-ce-build
@@ -16,7 +16,6 @@ periodics:
     spec:
       containers:
       - image: quay.io/powercloud/docker-ce-build
-        workingDir: /workspace
         command:
         - /bin/bash
         args:
@@ -80,7 +79,7 @@ periodics:
           - name: S3_SECRET_AUTH
             valueFrom:
               secretKeyRef:
-                name: secret-s3
+                name: s3-auth
                 key: password
       restartPolicy: Never
       volumes:
