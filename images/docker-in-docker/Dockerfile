@@ -84,7 +84,7 @@ RUN set -eux; \
 RUN set -eux; \
     wget https://raw.githubusercontent.com/docker-library/docker/094faa88f437cafef7aeb0cc36e75b59046cc4b9/20.10/dind/dockerd-entrypoint.sh;\
     chmod +x dockerd-entrypoint.sh;\
-    mv dockerd-entrypoint.sh /usr/local/bin
+    mv dockerd-entrypoint.sh /usr/local/bin;
 
 VOLUME /var/lib/docker
 EXPOSE 2375 2376
